@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1"
+  >
+
+  <title>Книга Кати</title>
+
+  <style>
+    :root {
+      --paper: #fff8eb;
+      --paper-dark: #ead8bb;
+      --brown: #754b3b;
+      --brown-dark: #322824;
+      --coffee: #704332;
+      --cream: #e4b984;
+      --green: #9daf8c;
+      --text: #332b27;
+      --muted: #7c6f65;
+      --shadow: 0 18px 45px rgba(59, 42, 30, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(
+          circle at 15% 10%,
+          rgba(255, 255, 255, 0.75),
+          transparent 30%
+        ),
+        linear-gradient(
+          145deg,
+          #cad6b8 0%,
+          #ead4b6 50%,
+          #b98160 100%
+        );
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(100%, 520px);
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      background: rgba(255, 250, 242, 0.72);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 0 60px rgba(54, 40, 29, 0.18);
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 24px 20px 36px;
+      animation: appear 0.45s ease;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2 {
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    h2 {
+      margin: 12px 0;
+      font-size: 34px;
+      line-height: 1.08;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .primary-button,
+    .secondary-button {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 16px;
+      font-weight: 800;
+    }
+
+    .primary-button {
+      border: 0;
+      color: white;
+      background: var(--brown-dark);
+      box-shadow: 0 10px 25px rgba(49, 39, 34, 0.2);
+    }
+
+    .secondary-button {
+      border: 1px solid rgba(49, 39, 34, 0.18);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .top-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .progress {
+      flex: 1;
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(49, 39, 34, 0.1);
+    }
+
+    .progress span {
+      display: block;
+      width: 16%;
+      height: 100%;
+      border-radius: 999px;
+      background: var(--brown);
+    }
+
+    /* Обложка */
+
+    .cover-screen {
+      justify-content: space-between;
+    }
+
+    .book-cover {
+      position: relative;
+      display: flex;
+      min-height: 520px;
+      margin: auto 0;
+      padding: 42px 34px;
+      overflow: hidden;
+      flex-direction: column;
+      justify-content: center;
+      color: #fff9ee;
+      border-radius: 12px 30px 30px 12px;
+      background: linear-gradient(135deg, #684235, #9d6b50);
+      box-shadow:
+        var(--shadow),
+        inset 12px 0 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .book-cover::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(255, 245, 224, 0.36);
+      border-radius: 8px 24px 24px 8px;
+    }
+
+    .book-cover > * {
+      position: relative;
+    }
+
+    .book-cover h1 {
+      margin: 16px 0;
+      font-size: 54px;
+      font-weight: 500;
+      line-height: 0.95;
+    }
+
+    .book-cover p {
+      max-width: 330px;
+      font-size: 17px;
+    }
+
+    .seal {
+      display: grid;
+      width: 82px;
+      height: 82px;
+      margin-bottom: 18px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      font-family: Georgia, serif;
+      font-size: 30px;
+    }
+
+    /* Хранитель */
+
+    .guardian-screen {
+      align-items: center;
+      justify-content: center;
+      gap: 17px;
+      text-align: center;
+    }
+
+    .guardian-screen .top-line {
+      width: 100%;
+    }
+
+    .avatar {
+      position: relative;
+      width: 155px;
+      height: 200px;
+      overflow: hidden;
+      border-radius: 80px 80px 35px 35px;
+      background: linear-gradient(
+        #d7a77f 0 34%,
+        #6c4437 34% 100%
+      );
+      box-shadow: 0 16px 35px rgba(65, 46, 34, 0.2);
+    }
+
+    .avatar::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      top: 40px;
+      left: 34px;
+      width: 86px;
+      height: 96px;
+      border-radius: 45% 45% 50% 50%;
+      background: #f0c5a2;
+    }
+
+    .avatar::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      top: 14px;
+      left: 28px;
+      width: 98px;
+      height: 66px;
+      border-radius: 55% 55% 25% 25%;
+      background: #573a31;
+      box-shadow:
+        25px 20px 0 -9px #573a31,
+        -24px 22px 0 -8px #573a31;
+    }
+
+    .face {
+      position: absolute;
+      z-index: 3;
+      top: 88px;
+      left: 58px;
+      width: 38px;
+      height: 18px;
+      border-bottom: 3px solid #96544a;
+      border-radius: 50%;
+    }
+
+    .face::before,
+    .face::after {
+      content: "";
+      position: absolute;
+      top: -18px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #45352e;
+    }
+
+    .face::before {
+      left: 3px;
+    }
+
+    .face::after {
+      right: 3px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      color: var(--brown);
+      border-radius: 999px;
+      background: #efe0c7;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .dialogue {
+      position: relative;
+      padding: 18px;
+      border-radius: 22px;
+      background: white;
+      box-shadow: var(--shadow);
+      line-height: 1.55;
+      text-align: left;
+    }
+
+    .dialogue::before {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: calc(50% - 10px);
+      width: 20px;
+      height: 20px;
+      background: white;
+      transform: rotate(45deg);
+    }
+
+    /* Игра */
+
+    .game-card,
+    .memory-card {
+      padding: 20px;
+      border: 1px solid rgba(71, 53, 40, 0.09);
+      border-radius: 25px;
+      background: rgba(255, 250, 241, 0.88);
+      box-shadow: var(--shadow);
+    }
+
+    .cups {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 25px 0 18px;
+    }
+
+    .cup-button {
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .cup {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+      border: 5px solid #5b5048;
+      border-radius: 8px 8px 36px 36px;
+      background: #f8f2e8;
+      box-shadow:
+        inset 0 -10px 20px rgba(69, 45, 30, 0.06),
+        0 12px 20px rgba(56, 43, 34, 0.12);
+      transition: transform 0.2s;
+    }
+
+    .cup-button:active .cup {
+      transform: scale(0.97);
+    }
+
+    .cup::after {
+      content: "";
+      position: absolute;
+      top: 39px;
+      right: -35px;
+      width: 54px;
+      height: 67px;
+      border: 5px solid #5b5048;
+      border-left: 0;
+      border-radius: 0 30px 30px 0;
+    }
+
+    .coffee {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(#a16c4c, var(--coffee));
+      transition: height 0.3s ease;
+    }
+
+    .foam {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      left: 8px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--cream);
+      opacity: 0.85;
+    }
+
+    .cup-name {
+      margin-top: 10px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .hint {
+      min-height: 44px;
+      color: var(--brown);
+      font-weight: 800;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    /* Воспоминание */
+
+    .memory-date {
+      color: var(--brown);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+
+    .video-box {
+      display: grid;
+      width: min(100%, 310px);
+      margin: 20px auto;
+      padding: 25px;
+      aspect-ratio: 9 / 16;
+      place-items: center;
+      overflow: hidden;
+      color: white;
+      border-radius: 24px;
+      background:
+        linear-gradient(
+          rgba(31, 27, 24, 0.2),
+          rgba(31, 27, 24, 0.3)
+        ),
+        linear-gradient(
+          145deg,
+          #78916b,
+          #d2aa7c 48%,
+          #6d4839
+        );
+      text-align: center;
+    }
+
+    .play-button {
+      display: grid;
+      width: 74px;
+      height: 74px;
+      margin: 0 auto 15px;
+      place-items: center;
+      color: var(--text);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      font-size: 29px;
+    }
+
+    .story {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      line-height: 1.65;
+    }
+
+    .quote {
+      padding-left: 15px;
+      color: #5e4a3d;
+      border-left: 3px solid #c99c6d;
+      font-style: italic;
+    }
+
+    .tags {
+      display: flex;
+      margin: 18px 0;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #eee0c8;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    /* Готовая книга */
+
+    .book-page {
+      position: relative;
+      min-height: 470px;
+      padding: 27px;
+      border-radius: 25px 7px 7px 25px;
+      background: var(--paper);
+      box-shadow:
+        inset 16px 0 0 rgba(92, 63, 45, 0.06),
+        var(--shadow);
+    }
+
+    .book-page::after {
+      content: "1";
+      position: absolute;
+      bottom: 17px;
+      left: 50%;
+      color: #8c7a6b;
+      font-family: Georgia, serif;
+    }
+
+    .photo-placeholder {
+      display: grid;
+      height: 170px;
+      margin: 20px 0;
+      padding: 18px;
+      place-items: center;
+      color: white;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #8da67c, #d7b081);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .space-top {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <!-- Экран 1. Обложка -->
+
+    <section class="screen cover-screen active" id="coverScreen">
+      <div class="eyebrow">
+        Интерактивная книга воспоминаний
+      </div>
+
+      <div class="book-cover">
+        <div class="seal">К</div>
+
+        <div
+          class="eyebrow"
+          style="color: #f1ddc6;"
+        >
+          Первая глава
+        </div>
+
+        <h1>
+          Книга<br>
+          Кати
+        </h1>
+
+        <p>
+          Некоторые страницы невозможно прочитать сразу.
+          Сначала их нужно вернуть.
+        </p>
+      </div>
+
+      <button
+        class="primary-button"
+        onclick="showScreen('guardianScreen')"
+      >
+        Открыть книгу
+      </button>
+    </section>
+
+    <!-- Экран 2. Хранитель -->
+
+    <section
+      class="screen guardian-screen"
+      id="guardianScreen"
+    >
+      <div class="top-line">
+        <span class="eyebrow">
+          Глава 1 из 6
+        </span>
+
+        <div class="progress">
+          <span></span>
+        </div>
+      </div>
+
+      <div class="avatar">
+        <span class="face"></span>
+      </div>
+
+      <div class="badge">
+        Хранитель выбора
+      </div>
+
+      <h2>
+        Первая страница находится у Тани
+      </h2>
+
+      <div class="dialogue">
+        «Не каждое важное воспоминание выглядит важным
+        в моменте. Иногда оно просто сидит напротив тебя
+        и пьёт кофе сразу из двух чашек».
+      </div>
+
+      <p>
+        Чтобы вернуть страницу, повтори Катин способ
+        пить кофе: обе чашки должны опустеть равномерно.
+      </p>
+
+      <button
+        class="primary-button"
+        onclick="startGame()"
+      >
+        Принять испытание
+      </button>
+    </section>
+
+    <!-- Экран 3. Игра -->
+
+    <section class="screen" id="gameScreen">
+      <div class="top-line">
+        <span class="eyebrow">
+          Испытание хранителя
+        </span>
+
+        <button
+          class="secondary-button"
+          style="width: auto;"
+          onclick="showScreen('guardianScreen')"
+        >
+          Назад
+        </button>
+      </div>
+
+      <div class="game-card">
+        <div class="badge">
+          24 июля 2026
+        </div>
+
+        <h2>
+          Две чашки
+        </h2>
+
+        <p>
+          Нажимай на чашки по очереди.
+          Два раза подряд пить из одной нельзя.
+        </p>
+
+        <div class="cups">
+          <button
+            class="cup-button"
+            onclick="drink('left')"
+          >
+            <div class="cup">
+              <div class="coffee" id="leftCoffee">
+                <div class="foam"></div>
+              </div>
+            </div>
+
+            <div class="cup-name">
+              Чашка 1
+            </div>
+          </button>
+
+          <button
+            class="cup-button"
+            onclick="drink('right')"
+          >
+            <div class="cup">
+              <div class="coffee" id="rightCoffee">
+                <div class="foam"></div>
+              </div>
+            </div>
+
+            <div class="cup-name">
+              Чашка 2
+            </div>
+          </button>
+        </div>
+
+        <div class="hint" id="gameHint">
+          Начни с любой чашки
+        </div>
+
+        <button
+          class="secondary-button"
+          onclick="resetGame()"
+        >
+          Начать заново
+        </button>
+      </div>
+    </section>
+
+    <!-- Экран 4. История -->
+
+    <section class="screen" id="memoryScreen">
+      <div class="top-line">
+        <span class="eyebrow">
+          Страница восстановлена
+        </span>
+
+        <div class="progress">
+          <span></span>
+        </div>
+      </div>
+
+      <article class="memory-card">
+        <div class="memory-date">
+          24.07.2026
+        </div>
+
+        <h2>
+          Кофе на двоих.<br>
+          Но для одного человека.
+        </h2>
+
+        <div class="video-box">
+          <div>
+            <div class="play-button">
+              ▶
+            </div>
+
+            <strong>
+              Здесь будет настоящее видео
+            </strong>
+
+            <p style="font-size: 13px;">
+              Катя пьёт кофе по очереди
+              из двух маленьких чашек
+            </p>
+          </div>
+        </div>
+
+        <div class="story">
+          <p>
+            Восемь друзей сняли домик на природе,
+            чтобы пожарить шашлыки, выдохнуть
+            и просто побыть вместе.
+          </p>
+
+          <p>
+            Таня привезла большой пакет кофе
+            «три в одном» с отдельной шоколадной
+            присыпкой. Всё было бы нормально,
+            если бы кружки в домике не оказались
+            размером примерно сто миллилитров.
+          </p>
+
+          <p>
+            Катя хотела именно этот кофе.
+            Поэтому разделила один пакет на две чашки
+            и пила из них строго по очереди,
+            сохраняя одинаковый уровень.
+          </p>
+
+          <p class="quote">
+            Сначала глоток из первой.
+            Потом сразу из второй.
+            И только после этого — шоколадка.
+          </p>
+        </div>
+
+        <div class="tags">
+          <span class="tag">
+            Домик на природе
+          </span>
+
+          <span class="tag">
+            8 друзей
+          </span>
+
+          <span class="tag">
+            2 чашки
+          </span>
+
+          <span class="tag">
+            1 пакет кофе
+          </span>
+        </div>
+
+        <button
+          class="primary-button"
+          onclick="showScreen('bookScreen')"
+        >
+          Добавить страницу в книгу
+        </button>
+      </article>
+    </section>
+
+    <!-- Экран 5. Страница книги -->
+
+    <section class="screen" id="bookScreen">
+      <div class="top-line">
+        <span class="eyebrow">
+          Книга Кати
+        </span>
+
+        <span class="badge">
+          Собрана 1 страница
+        </span>
+      </div>
+
+      <div class="book-page">
+        <div class="memory-date">
+          Глава I · Хранитель выбора
+        </div>
+
+        <h2 style="font-size: 30px;">
+          Кофе на двоих.<br>
+          Но для одного человека.
+        </h2>
+
+        <div class="photo-placeholder">
+          Здесь будет кадр из видео
+          или фотография кофе
+        </div>
+
+        <p
+          class="story"
+          style="font-size: 17px;"
+        >
+          Иногда бытовая нелепость становится
+          точным портретом человека. Катя не стала
+          выбирать между слишком крепким
+          и слишком слабым кофе. Она придумала
+          третий вариант и пила его из двух чашек.
+        </p>
+
+        <p class="small-note">
+          24 июля 2026 · свидетели:
+          Таня и Катя
+        </p>
+      </div>
+
+      <button
+        class="primary-button space-top"
+        onclick="showScreen('coverScreen')"
+      >
+        Вернуться к обложке
+      </button>
+
+      <p class="small-note">
+        Позже здесь появятся оглавление,
+        закрытые главы других хранителей,
+        календарь прохождения, фотографии,
+        видео и готовая книга.
+      </p>
+    </section>
+
+  </main>
+
+  <script>
+    const screens = document.querySelectorAll(".screen");
+
+    let cupLevels = {
+      left: 100,
+      right: 100
+    };
+
+    let lastCup = null;
+
+    function showScreen(screenId) {
+      screens.forEach(function (screen) {
+        screen.classList.remove("active");
+      });
+
+      document
+        .getElementById(screenId)
+        .classList.add("active");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function startGame() {
+      resetGame();
+      showScreen("gameScreen");
+    }
+
+    function updateCups() {
+      document.getElementById("leftCoffee").style.height =
+        cupLevels.left + "%";
+
+      document.getElementById("rightCoffee").style.height =
+        cupLevels.right + "%";
+    }
+
+    function resetGame() {
+      cupLevels.left = 100;
+      cupLevels.right = 100;
+      lastCup = null;
+
+      document.getElementById("gameHint").textContent =
+        "Начни с любой чашки";
+
+      updateCups();
+    }
+
+    function drink(cupName) {
+      const hint = document.getElementById("gameHint");
+
+      if (cupLevels[cupName] === 0) {
+        return;
+      }
+
+      if (lastCup === cupName) {
+        hint.textContent =
+          "Катя так не делала. Теперь глоток из другой чашки.";
+
+        return;
+      }
+
+      cupLevels[cupName] =
+        Math.max(0, cupLevels[cupName] - 20);
+
+      lastCup = cupName;
+
+      updateCups();
+
+      if (
+        cupLevels.left === 0 &&
+        cupLevels.right === 0
+      ) {
+        hint.textContent =
+          "Идеально равномерно. Страница открыта.";
+
+        setTimeout(function () {
+          showScreen("memoryScreen");
+        }, 700);
+
+        return;
+      }
+
+      const leftSips = cupLevels.left / 20;
+      const rightSips = cupLevels.right / 20;
+
+      hint.textContent =
+        "Осталось глотков: " +
+        leftSips +
+        " из первой и " +
+        rightSips +
+        " из второй";
+    }
+  </script>
+</body>
+</html>
