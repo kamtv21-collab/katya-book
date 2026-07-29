@@ -20,6 +20,7 @@
       --dark: #4a1b17;
       --coffee: #704332;
       --foam: #d9ad78;
+      --gold: #f6d99b;
       --shadow: 0 22px 60px rgba(48, 34, 26, 0.24);
     }
 
@@ -128,7 +129,7 @@
 
     .primary:disabled {
       cursor: default;
-      opacity: 0.75;
+      opacity: 0.72;
     }
 
     .secondary {
@@ -156,6 +157,7 @@
       display: block;
       width: 16%;
       height: 100%;
+      border-radius: inherit;
       background: var(--red);
     }
 
@@ -210,8 +212,6 @@
         translateX(7%);
     }
 
-    /* Задняя обложка */
-
     .back {
       position: absolute;
       inset: 0;
@@ -232,8 +232,6 @@
         translateX(7px)
         translateY(4px);
     }
-
-    /* Толщина страниц */
 
     .pages {
       position: absolute;
@@ -256,7 +254,28 @@
       transform: translateZ(-5px);
     }
 
-    /* Первая внутренняя страница */
+    .page-shadow {
+      position: absolute;
+      top: 12px;
+      right: 10px;
+      bottom: 12px;
+      left: 17px;
+      z-index: 1;
+      opacity: 0;
+      border-radius: 9px 21px 21px 9px;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(59, 37, 25, 0.22),
+          transparent 35%
+        );
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .page-shadow.visible {
+      opacity: 1;
+    }
 
     .inside {
       position: absolute;
@@ -272,8 +291,8 @@
       border-radius: 9px 21px 21px 9px;
       background:
         linear-gradient(
-          rgba(255, 250, 240, 0.97),
-          rgba(246, 233, 213, 0.97)
+          rgba(255, 250, 240, 0.98),
+          rgba(246, 233, 213, 0.98)
         ),
         repeating-linear-gradient(
           0deg,
@@ -283,7 +302,18 @@
       box-shadow:
         inset 15px 0 25px rgba(76, 48, 31, 0.09);
       text-align: center;
-      transform: translateZ(-1px);
+      transform-origin: left center;
+      backface-visibility: hidden;
+      transition:
+        transform 0.85s cubic-bezier(0.2, 0.75, 0.15, 1),
+        opacity 0.45s ease;
+    }
+
+    .inside.turning {
+      opacity: 0.35;
+      transform:
+        perspective(1400px)
+        rotateY(-155deg);
     }
 
     .inside strong {
@@ -295,7 +325,10 @@
       font-weight: 500;
     }
 
-    /* Готовая картинка обложки */
+    .inside p {
+      max-width: 300px;
+      margin: 0;
+    }
 
     .cover {
       position: absolute;
@@ -303,9 +336,10 @@
       z-index: 3;
       overflow: hidden;
       border-radius: 16px 28px 28px 16px;
+      background-color: #f4eadb;
       background-image: url("assets/cover.png");
-      background-position: center;
-      background-size: cover;
+      background-position: center 14px;
+      background-size: 96% auto;
       background-repeat: no-repeat;
       box-shadow:
         inset 13px 0 14px rgba(32, 12, 10, 0.24),
@@ -319,8 +353,6 @@
         transform 1.2s cubic-bezier(0.2, 0.75, 0.15, 1),
         box-shadow 0.6s ease;
     }
-
-    /* Свет у корешка */
 
     .cover::before {
       content: "";
@@ -338,15 +370,13 @@
         ),
         linear-gradient(
           145deg,
-          rgba(255, 255, 255, 0.11),
+          rgba(255, 255, 255, 0.1),
           transparent 24%,
           transparent 73%,
           rgba(35, 15, 11, 0.12)
         );
       mix-blend-mode: soft-light;
     }
-
-    /* Тонкая рамка */
 
     .cover::after {
       content: "";
@@ -525,7 +555,7 @@
       text-align: center;
     }
 
-    /* СТРАНИЦА ВОСПОМИНАНИЯ */
+    /* ИСТОРИЯ */
 
     .page-turn {
       animation: pageTurn 0.65s ease;
@@ -628,8 +658,507 @@
         var(--shadow);
     }
 
+    .book-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
     .space-top {
       margin-top: 18px;
+    }
+
+    /* БЫСТРАЯ ЗАГРУЗКА */
+
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      padding: 30px;
+      place-items: center;
+      color: #f9ecda;
+      background:
+        radial-gradient(
+          circle at center,
+          #77372d,
+          #321411 72%
+        );
+      text-align: center;
+    }
+
+    .loading-screen.active {
+      display: grid;
+      animation: loadingAppear 0.25s ease;
+    }
+
+    .loading-content {
+      width: min(100%, 280px);
+    }
+
+    .loading-symbol {
+      margin-bottom: 18px;
+      font-family: Georgia, serif;
+      font-size: 52px;
+      animation:
+        loadingFloat 0.7s ease-in-out infinite alternate;
+    }
+
+    .loading-content strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .loading-line {
+      height: 5px;
+      margin-top: 22px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .loading-line span {
+      display: block;
+      width: 35%;
+      height: 100%;
+      border-radius: inherit;
+      background: #f3dfbd;
+      animation:
+        loadingProgress 0.8s ease-in-out infinite;
+    }
+
+    @keyframes loadingAppear {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes loadingFloat {
+      from {
+        transform:
+          translateY(0)
+          rotate(-4deg);
+      }
+
+      to {
+        transform:
+          translateY(-8px)
+          rotate(4deg);
+      }
+    }
+
+    @keyframes loadingProgress {
+      from {
+        transform: translateX(-110%);
+      }
+
+      to {
+        transform: translateX(310%);
+      }
+    }
+
+    /* ВОЛШЕБНОЕ ВОССТАНОВЛЕНИЕ */
+
+    .restore-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      overflow: hidden;
+      place-items: center;
+      padding: 25px;
+      color: #fff3d7;
+      background:
+        radial-gradient(
+          circle at 50% 43%,
+          rgba(185, 112, 51, 0.42),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at center,
+          #6f3028,
+          #29100f 73%
+        );
+      text-align: center;
+    }
+
+    .restore-screen.active {
+      display: grid;
+      animation: restoreFadeIn 0.45s ease;
+    }
+
+    .restore-glow {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      opacity: 0;
+      background:
+        radial-gradient(
+          circle,
+          rgba(255, 223, 158, 0.55),
+          rgba(255, 191, 94, 0.14) 40%,
+          transparent 70%
+        );
+      animation: restoreGlow 3.8s ease forwards;
+    }
+
+    .magic-page {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      width: min(76vw, 300px);
+      aspect-ratio: 3 / 4;
+      padding: 25px;
+      place-items: center;
+      border: 1px solid rgba(121, 79, 45, 0.2);
+      border-radius: 8px 21px 21px 8px;
+      opacity: 0;
+      color: #5a382c;
+      background:
+        linear-gradient(
+          rgba(255, 250, 233, 0.98),
+          rgba(239, 218, 181, 0.98)
+        ),
+        repeating-linear-gradient(
+          0deg,
+          rgba(95, 63, 41, 0.04) 0 1px,
+          transparent 1px 5px
+        );
+      box-shadow:
+        0 22px 65px rgba(0, 0, 0, 0.32),
+        inset 13px 0 22px rgba(91, 55, 33, 0.1);
+      transform:
+        scale(0.18)
+        rotate(-16deg)
+        translateY(100px);
+      animation:
+        pageAppears 1.5s cubic-bezier(0.16, 0.8, 0.2, 1) 0.45s forwards,
+        pageFliesAway 1.1s cubic-bezier(0.4, 0, 0.2, 1) 2.8s forwards;
+    }
+
+    .magic-page::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      z-index: -1;
+      border-radius: inherit;
+      opacity: 0.7;
+      box-shadow:
+        0 0 35px rgba(255, 210, 126, 0.7),
+        0 0 80px rgba(255, 175, 73, 0.35);
+    }
+
+    .magic-page strong {
+      display: block;
+      margin-bottom: 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .magic-page p {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+    }
+
+    .restore-message {
+      position: absolute;
+      z-index: 4;
+      right: 20px;
+      bottom: 70px;
+      left: 20px;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: restoreMessage 0.7s ease 3.75s forwards;
+    }
+
+    .restore-message strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .restore-message p {
+      margin: 10px 0 0;
+      color: #ead1b0;
+      font-size: 14px;
+    }
+
+    .magic-book {
+      position: absolute;
+      z-index: 2;
+      bottom: 126px;
+      left: 50%;
+      width: 150px;
+      height: 92px;
+      opacity: 0;
+      transform: translateX(-50%) scale(0.8);
+      animation: magicBookAppears 0.7s ease 2.55s forwards;
+    }
+
+    .magic-book::before,
+    .magic-book::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 77px;
+      height: 85px;
+      background:
+        linear-gradient(
+          #fff7e8,
+          #ddbd89
+        );
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.27);
+    }
+
+    .magic-book::before {
+      right: 50%;
+      border-radius: 9px 2px 4px 13px;
+      transform: rotate(-10deg);
+      transform-origin: right bottom;
+    }
+
+    .magic-book::after {
+      left: 50%;
+      border-radius: 2px 9px 13px 4px;
+      transform: rotate(10deg);
+      transform-origin: left bottom;
+    }
+
+    .magic-book-glow {
+      position: absolute;
+      z-index: 1;
+      bottom: 85px;
+      left: 50%;
+      width: 250px;
+      height: 110px;
+      border-radius: 50%;
+      opacity: 0;
+      background:
+        radial-gradient(
+          ellipse,
+          rgba(255, 215, 129, 0.72),
+          transparent 67%
+        );
+      transform: translateX(-50%);
+      animation: bookGlow 0.8s ease 3.55s forwards;
+    }
+
+    .spark {
+      position: absolute;
+      z-index: 5;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      opacity: 0;
+      background: #ffe2a1;
+      box-shadow:
+        0 0 9px #ffd787,
+        0 0 20px rgba(255, 192, 80, 0.75);
+      animation: sparkle 2.2s ease-in-out infinite;
+    }
+
+    .spark:nth-child(1) {
+      top: 16%;
+      left: 18%;
+      animation-delay: 0.1s;
+    }
+
+    .spark:nth-child(2) {
+      top: 25%;
+      right: 15%;
+      animation-delay: 0.5s;
+    }
+
+    .spark:nth-child(3) {
+      top: 48%;
+      left: 11%;
+      animation-delay: 0.9s;
+    }
+
+    .spark:nth-child(4) {
+      top: 55%;
+      right: 13%;
+      animation-delay: 0.3s;
+    }
+
+    .spark:nth-child(5) {
+      top: 72%;
+      left: 24%;
+      animation-delay: 1.2s;
+    }
+
+    .spark:nth-child(6) {
+      top: 12%;
+      left: 53%;
+      animation-delay: 1.5s;
+    }
+
+    .spark:nth-child(7) {
+      top: 66%;
+      right: 27%;
+      animation-delay: 0.7s;
+    }
+
+    .spark:nth-child(8) {
+      top: 35%;
+      left: 31%;
+      animation-delay: 1.8s;
+    }
+
+    @keyframes restoreFadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes restoreGlow {
+      0% {
+        opacity: 0;
+        transform: scale(0.2);
+      }
+
+      45% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0.35;
+        transform: scale(1.2);
+      }
+    }
+
+    @keyframes pageAppears {
+      0% {
+        opacity: 0;
+        transform:
+          scale(0.18)
+          rotate(-16deg)
+          translateY(100px);
+      }
+
+      65% {
+        opacity: 1;
+        transform:
+          scale(1.04)
+          rotate(2deg)
+          translateY(-5px);
+      }
+
+      100% {
+        opacity: 1;
+        transform:
+          scale(1)
+          rotate(0)
+          translateY(0);
+      }
+    }
+
+    @keyframes pageFliesAway {
+      0% {
+        opacity: 1;
+        transform:
+          scale(1)
+          rotate(0)
+          translateY(0);
+      }
+
+      100% {
+        opacity: 0;
+        transform:
+          scale(0.22)
+          rotate(14deg)
+          translateY(540px);
+      }
+    }
+
+    @keyframes magicBookAppears {
+      from {
+        opacity: 0;
+        transform:
+          translateX(-50%)
+          scale(0.7)
+          translateY(18px);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateX(-50%)
+          scale(1)
+          translateY(0);
+      }
+    }
+
+    @keyframes bookGlow {
+      from {
+        opacity: 0;
+        transform:
+          translateX(-50%)
+          scale(0.4);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateX(-50%)
+          scale(1.1);
+      }
+    }
+
+    @keyframes restoreMessage {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes sparkle {
+      0%,
+      100% {
+        opacity: 0;
+        transform:
+          scale(0.3)
+          translateY(10px);
+      }
+
+      35% {
+        opacity: 1;
+      }
+
+      55% {
+        opacity: 0.9;
+        transform:
+          scale(1.5)
+          translateY(-14px);
+      }
+
+      80% {
+        opacity: 0;
+        transform:
+          scale(0.5)
+          translateY(-30px);
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -660,12 +1189,24 @@
 
           <div class="pages"></div>
 
-          <div class="inside">
-            <div>
-              <strong>Первая история</strong>
+          <div
+            class="page-shadow"
+            id="pageShadow"
+          ></div>
 
-              Некоторые страницы нельзя просто прочитать.
-              Сначала их нужно вернуть.
+          <div
+            class="inside"
+            id="insidePage"
+          >
+            <div>
+              <strong>
+                Первая история
+              </strong>
+
+              <p>
+                Некоторые страницы нельзя просто прочитать.
+                Сначала их нужно вернуть.
+              </p>
             </div>
           </div>
 
@@ -839,7 +1380,7 @@
       </div>
     </section>
 
-    <!-- ВОСПОМИНАНИЕ -->
+    <!-- ПОЛНАЯ ИСТОРИЯ -->
 
     <section
       class="screen"
@@ -945,14 +1486,14 @@
 
         <button
           class="primary space-top"
-          onclick="showScreen('bookScreen')"
+          id="addStoryButton"
         >
           Добавить историю в книгу
         </button>
       </article>
     </section>
 
-    <!-- СОБРАННАЯ СТРАНИЦА -->
+    <!-- СОХРАНЁННАЯ СТРАНИЦА -->
 
     <section
       class="screen"
@@ -991,185 +1532,422 @@
         </p>
       </div>
 
-      <button
-        class="primary space-top"
-        onclick="returnToCover()"
-      >
-        Закрыть книгу
-      </button>
+      <div class="book-actions">
+        <button
+          class="primary"
+          onclick="showLoading('memoryScreen')"
+        >
+          Прочитать историю полностью
+        </button>
+
+        <button
+          class="secondary"
+          onclick="replayStory()"
+        >
+          Пройти испытание ещё раз
+        </button>
+
+        <button
+          class="secondary"
+          onclick="returnToCover()"
+        >
+          Закрыть книгу
+        </button>
+      </div>
     </section>
 
   </main>
 
- <script>
-  const screens = document.querySelectorAll(".screen");
-  const shell = document.getElementById("shell");
-  const cover = document.getElementById("cover");
-  const openBookButton = document.getElementById("openBook");
+  <!-- ЗАГРУЗКА -->
 
-  let bookIsOpen = false;
+  <div
+    class="loading-screen"
+    id="loadingScreen"
+  >
+    <div class="loading-content">
+      <div class="loading-symbol">
+        ✦
+      </div>
 
-  let cups = {
-    left: 100,
-    right: 100
-  };
+      <strong>
+        Воспоминание загружается
+      </strong>
 
-  let lastCup = null;
+      <div class="loading-line">
+        <span></span>
+      </div>
+    </div>
+  </div>
 
-  function showScreen(screenId) {
-    screens.forEach(function (screen) {
-      screen.classList.remove("active");
-    });
+  <!-- ВОЛШЕБНАЯ АНИМАЦИЯ -->
 
-    document
-      .getElementById(screenId)
-      .classList.add("active");
+  <div
+    class="restore-screen"
+    id="restoreScreen"
+  >
+    <div class="restore-glow"></div>
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  }
+    <span class="spark"></span>
+    <span class="spark"></span>
+    <span class="spark"></span>
+    <span class="spark"></span>
+    <span class="spark"></span>
+    <span class="spark"></span>
+    <span class="spark"></span>
+    <span class="spark"></span>
 
-  function handleBookButton() {
-    if (bookIsOpen === false) {
-      openBookButton.disabled = true;
+    <div class="magic-page">
+      <div>
+        <strong>
+          Воспоминание восстановлено
+        </strong>
 
-      shell.classList.add("opening");
-      cover.classList.add("opening");
+        <p>
+          24 июля 2026
+        </p>
+      </div>
+    </div>
 
-      setTimeout(function () {
-        bookIsOpen = true;
+    <div class="magic-book-glow"></div>
 
-        openBookButton.textContent =
-          "Перелистнуть страницу";
+    <div class="magic-book"></div>
 
-        openBookButton.disabled = false;
-      }, 1200);
+    <div class="restore-message">
+      <strong>
+        Страница найдена
+        и добавлена в книгу
+      </strong>
 
-      return;
-    }
+      <p>
+        Теперь это воспоминание останется здесь.
+      </p>
+    </div>
+  </div>
 
-    showScreen("guardianScreen");
-  }
+  <script>
+    const screens =
+      document.querySelectorAll(".screen");
 
-  function returnToCover() {
-    showScreen("coverScreen");
+    const shell =
+      document.getElementById("shell");
 
-    bookIsOpen = false;
+    const cover =
+      document.getElementById("cover");
 
-    openBookButton.textContent =
-      "Открыть книгу";
+    const insidePage =
+      document.getElementById("insidePage");
 
-    shell.classList.remove("opening");
-    cover.classList.remove("opening");
-  }
+    const pageShadow =
+      document.getElementById("pageShadow");
 
-  function startGame() {
-    resetGame();
-    showScreen("gameScreen");
-  }
+    const openBookButton =
+      document.getElementById("openBook");
 
-  function updateCups() {
-    document
-      .getElementById("leftCoffee")
-      .style.height =
-      cups.left + "%";
+    const addStoryButton =
+      document.getElementById("addStoryButton");
 
-    document
-      .getElementById("rightCoffee")
-      .style.height =
-      cups.right + "%";
-  }
+    const loadingScreen =
+      document.getElementById("loadingScreen");
 
-  function resetGame() {
-    cups = {
+    const restoreScreen =
+      document.getElementById("restoreScreen");
+
+    const STORAGE_KEY =
+      "katyaBookStory1Unlocked";
+
+    let bookIsOpen = false;
+
+    let restoringNow = false;
+
+    let cups = {
       left: 100,
       right: 100
     };
 
-    lastCup = null;
+    let lastCup = null;
 
-    document
-      .getElementById("gameHint")
-      .textContent =
-      "Начни с любой чашки";
-
-    updateCups();
-  }
-
-  function drink(cupName) {
-    const hint =
-      document.getElementById("gameHint");
-
-    if (cups[cupName] === 0) {
-      return;
-    }
-
-    if (lastCup === cupName) {
-      hint.textContent =
-        "Теперь нажми на другую чашку.";
-
-      return;
-    }
-
-    cups[cupName] =
-      Math.max(
-        0,
-        cups[cupName] - 20
+    function storyIsUnlocked() {
+      return (
+        localStorage.getItem(STORAGE_KEY) === "true"
       );
+    }
 
-    lastCup = cupName;
+    function saveStory() {
+      localStorage.setItem(
+        STORAGE_KEY,
+        "true"
+      );
+    }
 
-    updateCups();
+    function showScreen(screenId) {
+      screens.forEach(function (screen) {
+        screen.classList.remove("active");
+      });
 
-    if (
-      cups.left === 0 &&
-      cups.right === 0
-    ) {
-      hint.textContent =
-        "Готово. История открыта.";
+      const target =
+        document.getElementById(screenId);
+
+      if (!target) {
+        return;
+      }
+
+      target.classList.add("active");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function showLoading(nextScreen) {
+      loadingScreen.classList.add("active");
 
       setTimeout(function () {
-        showScreen("memoryScreen");
+        showScreen(nextScreen);
+
+        loadingScreen.classList.remove("active");
       }, 700);
-
-      return;
     }
 
-    hint.textContent =
-      "Продолжай пить по очереди.";
-  }
+    function updateCoverButton() {
+      if (storyIsUnlocked()) {
+        openBookButton.textContent =
+          "Открыть сохранённую историю";
 
-  openBookButton.addEventListener(
-    "click",
-    handleBookButton
-  );
+        return;
+      }
 
-  const coffeeVideo =
-    document.getElementById("coffeeVideo");
+      if (bookIsOpen) {
+        openBookButton.textContent =
+          "Перелистнуть страницу";
 
-  const videoFallback =
-    document.getElementById("videoFallback");
+        return;
+      }
 
-  coffeeVideo.addEventListener(
-    "loadeddata",
-    function () {
-      videoFallback.style.display =
-        "none";
+      openBookButton.textContent =
+        "Открыть книгу";
     }
-  );
 
-  coffeeVideo.addEventListener(
-    "error",
-    function () {
-      coffeeVideo.style.display =
-        "none";
+    function handleBookButton() {
+      if (storyIsUnlocked()) {
+        showLoading("bookScreen");
+        return;
+      }
 
-      videoFallback.style.display =
-        "grid";
+      if (!bookIsOpen) {
+        openBookButton.disabled = true;
+
+        shell.classList.add("opening");
+        cover.classList.add("opening");
+
+        setTimeout(function () {
+          bookIsOpen = true;
+
+          openBookButton.disabled = false;
+
+          updateCoverButton();
+        }, 1200);
+
+        return;
+      }
+
+      openBookButton.disabled = true;
+
+      openBookButton.textContent =
+        "Перелистываем…";
+
+      insidePage.classList.add("turning");
+      pageShadow.classList.add("visible");
+
+      setTimeout(function () {
+        showLoading("guardianScreen");
+
+        insidePage.classList.remove("turning");
+        pageShadow.classList.remove("visible");
+
+        openBookButton.disabled = false;
+
+        updateCoverButton();
+      }, 800);
     }
-  );
-</script>
+
+    function returnToCover() {
+      showScreen("coverScreen");
+
+      bookIsOpen = false;
+
+      shell.classList.remove("opening");
+      cover.classList.remove("opening");
+      insidePage.classList.remove("turning");
+      pageShadow.classList.remove("visible");
+
+      openBookButton.disabled = false;
+
+      updateCoverButton();
+    }
+
+    function startGame() {
+      resetGame();
+
+      showLoading("gameScreen");
+    }
+
+    function replayStory() {
+      resetGame();
+
+      showLoading("guardianScreen");
+    }
+
+    function updateCups() {
+      document
+        .getElementById("leftCoffee")
+        .style.height =
+        cups.left + "%";
+
+      document
+        .getElementById("rightCoffee")
+        .style.height =
+        cups.right + "%";
+    }
+
+    function resetGame() {
+      cups = {
+        left: 100,
+        right: 100
+      };
+
+      lastCup = null;
+
+      restoringNow = false;
+
+      document
+        .getElementById("gameHint")
+        .textContent =
+        "Начни с любой чашки";
+
+      updateCups();
+    }
+
+    function playRestoreAnimation() {
+      if (restoringNow) {
+        return;
+      }
+
+      restoringNow = true;
+
+      saveStory();
+
+      restoreScreen.classList.add("active");
+
+      setTimeout(function () {
+        restoreScreen.classList.remove("active");
+
+        updateCoverButton();
+
+        showScreen("memoryScreen");
+
+        restoringNow = false;
+      }, 4900);
+    }
+
+    function drink(cupName) {
+      const hint =
+        document.getElementById("gameHint");
+
+      if (
+        cupName !== "left" &&
+        cupName !== "right"
+      ) {
+        return;
+      }
+
+      if (cups[cupName] === 0) {
+        return;
+      }
+
+      if (lastCup === cupName) {
+        hint.textContent =
+          "Теперь нужно сделать глоток из другой чашки.";
+
+        return;
+      }
+
+      cups[cupName] =
+        Math.max(
+          0,
+          cups[cupName] - 20
+        );
+
+      lastCup = cupName;
+
+      updateCups();
+
+      if (
+        cups.left === 0 &&
+        cups.right === 0
+      ) {
+        hint.textContent =
+          "Равновесие сохранено.";
+
+        setTimeout(function () {
+          playRestoreAnimation();
+        }, 500);
+
+        return;
+      }
+
+      hint.textContent =
+        "Осталось глотков: " +
+        cups.left / 20 +
+        " из первой и " +
+        cups.right / 20 +
+        " из второй";
+    }
+
+    function addStoryToBook() {
+      saveStory();
+
+      updateCoverButton();
+
+      showLoading("bookScreen");
+    }
+
+    openBookButton.addEventListener(
+      "click",
+      handleBookButton
+    );
+
+    addStoryButton.addEventListener(
+      "click",
+      addStoryToBook
+    );
+
+    const coffeeVideo =
+      document.getElementById("coffeeVideo");
+
+    const videoFallback =
+      document.getElementById("videoFallback");
+
+    coffeeVideo.addEventListener(
+      "loadeddata",
+      function () {
+        videoFallback.style.display =
+          "none";
+      }
+    );
+
+    coffeeVideo.addEventListener(
+      "error",
+      function () {
+        coffeeVideo.style.display =
+          "none";
+
+        videoFallback.style.display =
+          "grid";
+      }
+    );
+
+    updateCoverButton();
+  </script>
 </body>
 </html>
