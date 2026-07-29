@@ -1001,176 +1001,175 @@
 
   </main>
 
-  <script>
-    const screens =
-      document.querySelectorAll(".screen");
+ <script>
+  const screens = document.querySelectorAll(".screen");
+  const shell = document.getElementById("shell");
+  const cover = document.getElementById("cover");
+  const openBookButton = document.getElementById("openBook");
 
-    const shell =
-      document.getElementById("shell");
+  let bookIsOpen = false;
 
-    const cover =
-      document.getElementById("cover");
+  let cups = {
+    left: 100,
+    right: 100
+  };
 
-    const openBookButton =
-      document.getElementById("openBook");
+  let lastCup = null;
 
-    let cups = {
-      left: 100,
-      right: 100
-    };
+  function showScreen(screenId) {
+    screens.forEach(function (screen) {
+      screen.classList.remove("active");
+    });
 
-    let lastCup = null;
+    document
+      .getElementById(screenId)
+      .classList.add("active");
 
-    function showScreen(screenId) {
-      screens.forEach(function (screen) {
-        screen.classList.remove("active");
-      });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
 
-      const targetScreen =
-        document.getElementById(screenId);
-
-      if (!targetScreen) {
-        return;
-      }
-
-      targetScreen.classList.add("active");
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
-
-    function openAnimatedBook() {
+  function handleBookButton() {
+    if (bookIsOpen === false) {
       openBookButton.disabled = true;
 
       shell.classList.add("opening");
       cover.classList.add("opening");
 
       setTimeout(function () {
-        showScreen("guardianScreen");
+        bookIsOpen = true;
 
-        setTimeout(function () {
-          shell.classList.remove("opening");
-          cover.classList.remove("opening");
-          openBookButton.disabled = false;
-        }, 200);
-      }, 1150);
+        openBookButton.textContent =
+          "Перелистнуть страницу";
+
+        openBookButton.disabled = false;
+      }, 1200);
+
+      return;
     }
 
-    function returnToCover() {
-      showScreen("coverScreen");
+    showScreen("guardianScreen");
+  }
+
+  function returnToCover() {
+    showScreen("coverScreen");
+
+    bookIsOpen = false;
+
+    openBookButton.textContent =
+      "Открыть книгу";
+
+    shell.classList.remove("opening");
+    cover.classList.remove("opening");
+  }
+
+  function startGame() {
+    resetGame();
+    showScreen("gameScreen");
+  }
+
+  function updateCups() {
+    document
+      .getElementById("leftCoffee")
+      .style.height =
+      cups.left + "%";
+
+    document
+      .getElementById("rightCoffee")
+      .style.height =
+      cups.right + "%";
+  }
+
+  function resetGame() {
+    cups = {
+      left: 100,
+      right: 100
+    };
+
+    lastCup = null;
+
+    document
+      .getElementById("gameHint")
+      .textContent =
+      "Начни с любой чашки";
+
+    updateCups();
+  }
+
+  function drink(cupName) {
+    const hint =
+      document.getElementById("gameHint");
+
+    if (cups[cupName] === 0) {
+      return;
+    }
+
+    if (lastCup === cupName) {
+      hint.textContent =
+        "Теперь нажми на другую чашку.";
+
+      return;
+    }
+
+    cups[cupName] =
+      Math.max(
+        0,
+        cups[cupName] - 20
+      );
+
+    lastCup = cupName;
+
+    updateCups();
+
+    if (
+      cups.left === 0 &&
+      cups.right === 0
+    ) {
+      hint.textContent =
+        "Готово. История открыта.";
 
       setTimeout(function () {
-        shell.classList.remove("opening");
-        cover.classList.remove("opening");
-        openBookButton.disabled = false;
-      }, 50);
+        showScreen("memoryScreen");
+      }, 700);
+
+      return;
     }
 
-    function startGame() {
-      resetGame();
-      showScreen("gameScreen");
+    hint.textContent =
+      "Продолжай пить по очереди.";
+  }
+
+  openBookButton.addEventListener(
+    "click",
+    handleBookButton
+  );
+
+  const coffeeVideo =
+    document.getElementById("coffeeVideo");
+
+  const videoFallback =
+    document.getElementById("videoFallback");
+
+  coffeeVideo.addEventListener(
+    "loadeddata",
+    function () {
+      videoFallback.style.display =
+        "none";
     }
+  );
 
-    function updateCups() {
-      document.getElementById("leftCoffee").style.height =
-        cups.left + "%";
+  coffeeVideo.addEventListener(
+    "error",
+    function () {
+      coffeeVideo.style.display =
+        "none";
 
-      document.getElementById("rightCoffee").style.height =
-        cups.right + "%";
+      videoFallback.style.display =
+        "grid";
     }
-
-    function resetGame() {
-      cups = {
-        left: 100,
-        right: 100
-      };
-
-      lastCup = null;
-
-      document.getElementById("gameHint").textContent =
-        "Начни с любой чашки";
-
-      updateCups();
-    }
-
-    function drink(cupName) {
-      const hint =
-        document.getElementById("gameHint");
-
-      if (
-        cupName !== "left" &&
-        cupName !== "right"
-      ) {
-        return;
-      }
-
-      if (cups[cupName] === 0) {
-        return;
-      }
-
-      if (lastCup === cupName) {
-        hint.textContent =
-          "Теперь нужно сделать глоток из другой чашки.";
-
-        return;
-      }
-
-      cups[cupName] =
-        Math.max(0, cups[cupName] - 20);
-
-      lastCup = cupName;
-
-      updateCups();
-
-      if (
-        cups.left === 0 &&
-        cups.right === 0
-      ) {
-        hint.textContent =
-          "Равновесие сохранено. История открыта.";
-
-        setTimeout(function () {
-          showScreen("memoryScreen");
-        }, 700);
-
-        return;
-      }
-
-      hint.textContent =
-        "Осталось глотков: " +
-        cups.left / 20 +
-        " из первой и " +
-        cups.right / 20 +
-        " из второй";
-    }
-
-    openBookButton.addEventListener(
-      "click",
-      openAnimatedBook
-    );
-
-    const coffeeVideo =
-      document.getElementById("coffeeVideo");
-
-    const videoFallback =
-      document.getElementById("videoFallback");
-
-    coffeeVideo.addEventListener(
-      "loadeddata",
-      function () {
-        videoFallback.style.display = "none";
-      }
-    );
-
-    coffeeVideo.addEventListener(
-      "error",
-      function () {
-        coffeeVideo.style.display = "none";
-        videoFallback.style.display = "grid";
-      }
-    );
-  </script>
+  );
+</script>
 </body>
 </html>
