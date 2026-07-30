@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#efe4d4">
   <title>Истории, из которых ты состоишь</title>
+  <link rel="preload" as="image" href="assets/guardians/tanya-loading.png">
   <style>
     :root {
       --paper: #f7efe3;
@@ -625,60 +626,298 @@
       to { opacity: 0; transform: translateY(-170px) scale(1.1); }
     }
 
-    /* Настоящая перелистываемая книга */
+    /* Объёмная перелистываемая книга */
 
     .reader-shell {
-      width: min(1120px, 100%);
+      width: min(1160px, 100%);
       display: grid;
       justify-items: center;
-      gap: 16px;
+      gap: 18px;
     }
 
     .reader-book {
-      width: min(1080px, 100%);
-      height: min(76svh, 720px);
-      min-height: 560px;
+      --book-page: #f8eddd;
+      width: min(1100px, 100%);
+      height: min(76svh, 730px);
+      min-height: 570px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       position: relative;
-      overflow: hidden;
-      border-radius: 18px 28px 28px 18px;
-      background: #f7ecdc;
-      box-shadow: 0 32px 88px rgba(57, 36, 30, .24);
-      perspective: 1800px;
+      overflow: visible;
+      border-radius: 20px 30px 30px 20px;
+      background: #cbb89e;
+      box-shadow:
+        0 38px 95px rgba(53, 33, 28, .28),
+        0 10px 0 #bba68a,
+        0 14px 0 rgba(117, 91, 68, .32);
+      perspective: 2600px;
+      transform-style: preserve-3d;
+      isolation: isolate;
     }
 
-    .reader-page {
+    .reader-book::before {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      inset: -9px -12px -13px;
+      border-radius: 25px 36px 36px 25px;
+      background: linear-gradient(135deg, #7b3a46, #552630 58%, #442027);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.08),
+        0 18px 40px rgba(58, 31, 30, .24);
+      transform: translateZ(-18px);
+    }
+
+    .reader-book::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      left: 1.5%;
+      right: 1.5%;
+      bottom: -8px;
+      height: 15px;
+      border-radius: 0 0 18px 18px;
+      background: repeating-linear-gradient(
+        0deg,
+        #f3e6d3 0 2px,
+        #d7c3a7 2px 3px
+      );
+      box-shadow: 0 5px 10px rgba(76, 49, 39, .18);
+    }
+
+    .reader-page-stack {
+      position: absolute;
+      z-index: 1;
+      top: 8px;
+      bottom: 8px;
+      width: 17px;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        90deg,
+        #f5ead9 0 3px,
+        #d9c6aa 3px 4px
+      );
+      box-shadow: inset 0 0 7px rgba(83, 57, 43, .16);
+    }
+
+    .reader-page-stack.left {
+      left: -7px;
+      border-radius: 15px 0 0 15px;
+      transform: perspective(700px) rotateY(9deg);
+      transform-origin: right center;
+    }
+
+    .reader-page-stack.right {
+      right: -7px;
+      border-radius: 0 15px 15px 0;
+      transform: perspective(700px) rotateY(-9deg);
+      transform-origin: left center;
+    }
+
+    .reader-page,
+    .turn-face {
       min-width: 0;
       height: 100%;
-      padding: clamp(28px, 4vw, 52px);
+      padding: clamp(29px, 4vw, 53px);
       position: relative;
       overflow: hidden;
+      color: var(--ink);
       background:
-        linear-gradient(rgba(255, 251, 243, .84), rgba(247, 235, 216, .9)),
+        linear-gradient(rgba(255, 251, 243, .9), rgba(247, 235, 216, .94)),
         repeating-linear-gradient(0deg, transparent 0 4px, rgba(91, 63, 45, .019) 5px);
     }
 
-    .reader-page.is-turning-next { animation: pageTurnNext .48s ease both; transform-origin: left center; }
-    .reader-page.is-turning-prev { animation: pageTurnPrev .48s ease both; transform-origin: right center; }
-
-    @keyframes pageTurnNext {
-      0% { opacity: 1; transform: rotateY(0); }
-      50% { opacity: .35; transform: rotateY(-72deg); }
-      100% { opacity: 1; transform: rotateY(0); }
+    .reader-page {
+      z-index: 2;
+      transform-style: preserve-3d;
     }
 
-    @keyframes pageTurnPrev {
-      0% { opacity: 1; transform: rotateY(0); }
-      50% { opacity: .35; transform: rotateY(72deg); }
-      100% { opacity: 1; transform: rotateY(0); }
+    .reader-page.left-page {
+      border-radius: 15px 3px 3px 22px;
+      box-shadow:
+        inset -30px 0 35px -28px rgba(62, 40, 34, .43),
+        inset 7px 0 9px rgba(255,255,255,.25);
+      transform: rotateY(1.15deg);
+      transform-origin: right center;
     }
 
-    .reader-page.empty {
+    .reader-page.right-page {
+      border-radius: 3px 22px 22px 3px;
+      box-shadow:
+        inset 30px 0 35px -28px rgba(62, 40, 34, .43),
+        inset -7px 0 9px rgba(255,255,255,.25);
+      transform: rotateY(-1.15deg);
+      transform-origin: left center;
+    }
+
+    .reader-gutter {
+      position: absolute;
+      z-index: 8;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 72px;
+      transform: translateX(-50%);
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at center, rgba(52, 31, 28, .33) 0, rgba(78, 49, 39, .18) 22%, rgba(255,255,255,.11) 43%, transparent 69%),
+        linear-gradient(90deg, transparent 0 23%, rgba(81, 52, 42, .13) 42%, rgba(255,255,255,.2) 50%, rgba(81, 52, 42, .13) 58%, transparent 77%);
+      filter: blur(.15px);
+      mix-blend-mode: multiply;
+    }
+
+    .reader-gutter::after {
+      content: "";
+      position: absolute;
+      top: 2%;
+      bottom: 2%;
+      left: 50%;
+      width: 8px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: linear-gradient(90deg, rgba(53,31,28,.28), rgba(255,255,255,.25), rgba(53,31,28,.24));
+      box-shadow: 0 0 20px rgba(56, 34, 29, .2);
+      opacity: .72;
+    }
+
+    .page-turner {
+      position: absolute;
+      z-index: 12;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      perspective: 2600px;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+
+    .page-turner.next { left: 50%; }
+    .page-turner.prev { left: 0; }
+
+    .turn-sheet {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .page-turner.next .turn-sheet {
+      transform-origin: left center;
+      animation: realisticTurnNext 1.08s cubic-bezier(.22,.68,.18,1) both;
+    }
+
+    .page-turner.prev .turn-sheet {
+      transform-origin: right center;
+      animation: realisticTurnPrev 1.08s cubic-bezier(.22,.68,.18,1) both;
+    }
+
+    .turn-sheet::before {
+      content: "";
+      position: absolute;
+      z-index: 4;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(90deg, transparent, rgba(57,35,30,.32) 54%, rgba(255,255,255,.38) 78%, transparent);
+      animation: movingFold 1.08s ease-in-out both;
+      mix-blend-mode: multiply;
+    }
+
+    .turn-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform-style: preserve-3d;
+      border-radius: 3px 22px 22px 3px;
+      box-shadow: 0 7px 22px rgba(55,35,30,.18);
+    }
+
+    .turn-front {
+      transform: rotateY(0deg) translateZ(.4px);
+      box-shadow:
+        inset 26px 0 34px -28px rgba(60,38,32,.35),
+        -12px 6px 24px rgba(49,30,27,.2);
+    }
+
+    .turn-back {
+      transform: rotateY(180deg) translateZ(.4px);
+      border-radius: 22px 3px 3px 22px;
+      box-shadow:
+        inset -26px 0 34px -28px rgba(60,38,32,.35),
+        12px 6px 24px rgba(49,30,27,.2);
+    }
+
+    .page-turner.prev .turn-front {
+      border-radius: 22px 3px 3px 22px;
+      box-shadow:
+        inset -26px 0 34px -28px rgba(60,38,32,.35),
+        12px 6px 24px rgba(49,30,27,.2);
+    }
+
+    .page-turner.prev .turn-back {
+      border-radius: 3px 22px 22px 3px;
+      box-shadow:
+        inset 26px 0 34px -28px rgba(60,38,32,.35),
+        -12px 6px 24px rgba(49,30,27,.2);
+    }
+
+    .page-turner.next .turn-face {
+      animation: curveFaceNext 1.08s ease-in-out both;
+    }
+
+    .page-turner.prev .turn-face {
+      animation: curveFacePrev 1.08s ease-in-out both;
+    }
+
+    @keyframes curveFaceNext {
+      0% { border-radius: 3px 22px 22px 3px; }
+      45% { border-radius: 3px 48% 48% 3px / 3px 11% 11% 3px; }
+      56% { border-radius: 48% 3px 3px 48% / 11% 3px 3px 11%; }
+      100% { border-radius: 22px 3px 3px 22px; }
+    }
+
+    @keyframes curveFacePrev {
+      0% { border-radius: 22px 3px 3px 22px; }
+      45% { border-radius: 48% 3px 3px 48% / 11% 3px 3px 11%; }
+      56% { border-radius: 3px 48% 48% 3px / 3px 11% 11% 3px; }
+      100% { border-radius: 3px 22px 22px 3px; }
+    }
+
+    @keyframes realisticTurnNext {
+      0%   { transform: rotateY(0deg) translateZ(2px) scaleX(1); border-radius: 0 22px 22px 0; }
+      18%  { transform: rotateY(-25deg) translateZ(18px) scaleX(1.01) skewY(-.25deg); border-radius: 0 28% 28% 0 / 2% 5% 5% 2%; }
+      46%  { transform: rotateY(-78deg) translateZ(52px) scaleX(1.16) skewY(-1.1deg); border-radius: 0 52% 52% 0 / 4% 11% 11% 4%; }
+      55%  { transform: rotateY(-101deg) translateZ(58px) scaleX(1.2) skewY(-.8deg); border-radius: 48% 0 0 48% / 10% 4% 4% 10%; }
+      82%  { transform: rotateY(-157deg) translateZ(18px) scaleX(1.02) skewY(.2deg); border-radius: 28% 0 0 28% / 5% 2% 2% 5%; }
+      100% { transform: rotateY(-180deg) translateZ(1px) scaleX(1); border-radius: 22px 0 0 22px; }
+    }
+
+    @keyframes realisticTurnPrev {
+      0%   { transform: rotateY(0deg) translateZ(2px) scaleX(1); border-radius: 22px 0 0 22px; }
+      18%  { transform: rotateY(25deg) translateZ(18px) scaleX(1.01) skewY(.25deg); border-radius: 28% 0 0 28% / 5% 2% 2% 5%; }
+      46%  { transform: rotateY(78deg) translateZ(52px) scaleX(1.16) skewY(1.1deg); border-radius: 52% 0 0 52% / 11% 4% 4% 11%; }
+      55%  { transform: rotateY(101deg) translateZ(58px) scaleX(1.2) skewY(.8deg); border-radius: 0 48% 48% 0 / 4% 10% 10% 4%; }
+      82%  { transform: rotateY(157deg) translateZ(18px) scaleX(1.02) skewY(-.2deg); border-radius: 0 28% 28% 0 / 2% 5% 5% 2%; }
+      100% { transform: rotateY(180deg) translateZ(1px) scaleX(1); border-radius: 0 22px 22px 0; }
+    }
+
+    @keyframes movingFold {
+      0%, 100% { opacity: 0; transform: translateX(0); }
+      30% { opacity: .34; transform: translateX(-7%); }
+      52% { opacity: .58; transform: translateX(-18%); }
+      75% { opacity: .24; transform: translateX(-8%); }
+    }
+
+    .reader-page.empty,
+    .turn-face.empty {
       background:
         radial-gradient(circle at 30% 30%, rgba(164, 193, 195, .2), transparent 35%),
-        linear-gradient(rgba(255, 251, 243, .78), rgba(247, 235, 216, .88));
+        linear-gradient(rgba(255, 251, 243, .84), rgba(247, 235, 216, .92));
     }
+
+    .reader-book.is-turning .reader-controls,
+    .reader-book.is-turning + .reader-controls { pointer-events: none; }
 
     .reader-meta {
       margin-bottom: 18px;
@@ -688,28 +927,32 @@
       text-transform: uppercase;
     }
 
-    .reader-page h1 {
+    .reader-page h1,
+    .turn-face h1 {
       margin: 0 0 18px;
       font-size: clamp(34px, 4.3vw, 58px);
       font-weight: 400;
       line-height: 1.04;
     }
 
-    .reader-page h2 {
+    .reader-page h2,
+    .turn-face h2 {
       margin: 0 0 16px;
       font-size: clamp(27px, 3vw, 42px);
       font-weight: 400;
       line-height: 1.08;
     }
 
-    .reader-page p {
+    .reader-page p,
+    .turn-face p {
       margin: 0 0 .92em;
       color: #5f4a43;
       font-size: clamp(15px, 1.45vw, 18px);
       line-height: 1.62;
     }
 
-    .reader-page blockquote {
+    .reader-page blockquote,
+    .turn-face blockquote {
       margin: 26px 0 0;
       padding: 18px 0 0 18px;
       border-top: 1px solid rgba(120, 55, 68, .15);
@@ -727,7 +970,7 @@
       background:
         radial-gradient(circle at 28% 30%, rgba(164, 193, 195, .26), transparent 34%),
         radial-gradient(circle at 72% 70%, rgba(190, 130, 105, .22), transparent 40%),
-        linear-gradient(rgba(255, 251, 243, .84), rgba(247, 235, 216, .9));
+        linear-gradient(rgba(255, 251, 243, .9), rgba(247, 235, 216, .94));
     }
 
     .chapter-title-page .chapter-number {
@@ -737,8 +980,65 @@
       line-height: 1;
     }
 
+    .book-contents-page {
+      display: grid;
+      align-content: center;
+    }
+
+    .book-toc-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .book-toc-item,
+    .book-toc-pending {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 92px 1fr auto;
+      gap: 13px;
+      align-items: center;
+      padding: 14px 15px;
+      border: 1px solid rgba(120, 55, 68, .15);
+      border-radius: 14px;
+      color: inherit;
+      text-align: left;
+      background: rgba(255, 251, 244, .6);
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .book-toc-item:hover,
+    .book-toc-pending:hover {
+      transform: translateX(3px);
+      background: rgba(255, 251, 244, .9);
+    }
+
+    .book-toc-item small,
+    .book-toc-pending small {
+      color: var(--wine);
+      font: 700 10px/1.3 Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .book-toc-item strong,
+    .book-toc-pending strong {
+      font-weight: 400;
+      font-size: 18px;
+    }
+
+    .book-toc-arrow { color: var(--gold); font-size: 22px; }
+
+    .book-toc-note {
+      margin-top: 18px !important;
+      padding-top: 15px;
+      border-top: 1px solid rgba(120,55,68,.12);
+      font-style: italic;
+    }
+
     .reader-controls {
-      width: min(1080px, 100%);
+      width: min(1100px, 100%);
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       gap: 12px;
@@ -987,6 +1287,27 @@
       object-fit: cover;
     }
 
+    .video-placeholder {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 10px;
+      color: #fff8ee;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(164,193,195,.35), transparent 35%),
+        radial-gradient(circle at 75% 72%, rgba(190,130,105,.34), transparent 40%),
+        linear-gradient(145deg, #6d3942, #3f282b);
+    }
+
+    .video-placeholder small {
+      font: 700 11px/1.2 Arial, sans-serif;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      opacity: .8;
+    }
+
     .album-thumb .media-missing {
       padding: 25px;
       color: var(--muted);
@@ -1156,7 +1477,7 @@
       .intro-art { min-height: 330px; }
       .intro-art .art-slot { height: 370px; }
       .intro-copy { max-height: none; overflow: visible; }
-      .prelude-book::before, .reader-book::before { display: none; }
+      .prelude-book::before { display: none; }
       .paper-page.decorative { min-height: 245px; }
       .paper-page { padding: 30px 24px 62px; }
       .password-art .art-slot { height: 315px; }
@@ -1168,13 +1489,26 @@
         width: min(94vw, 560px);
         height: min(72svh, 680px);
         min-height: 510px;
-        grid-template-columns: 1fr;
-        border-radius: 18px;
+        display: block;
+        border-radius: 18px 25px 25px 18px;
       }
       .reader-page { padding: 25px 23px 48px; }
-      .reader-page + .reader-page { display: none; }
-      .reader-page p { font-size: clamp(15px, 3.9vw, 17px); line-height: 1.55; }
-      .reader-page h1 { font-size: clamp(34px, 9vw, 50px); }
+      .reader-page.left-page {
+        width: 100%;
+        border-radius: 15px 23px 23px 15px;
+        transform: none;
+        box-shadow: inset 18px 0 28px -27px rgba(62,40,34,.34);
+      }
+      .reader-page.right-page { display: none; }
+      .reader-page-stack.left { display: none; }
+      .reader-page-stack.right { right: -6px; }
+      .reader-gutter { display: none; }
+      .page-turner { left: 0 !important; width: 100%; }
+      .turn-face { padding: 25px 23px 48px; border-radius: 15px 23px 23px 15px; }
+      .reader-page p, .turn-face p { font-size: clamp(15px, 3.9vw, 17px); line-height: 1.55; }
+      .reader-page h1, .turn-face h1 { font-size: clamp(34px, 9vw, 50px); }
+      .book-toc-item, .book-toc-pending { grid-template-columns: 1fr auto; }
+      .book-toc-item small, .book-toc-pending small { grid-column: 1 / -1; }
       .reader-controls { grid-template-columns: auto 1fr auto; }
       .reader-extra-actions { max-width: 94vw; }
       .cups { gap: 12px; }
@@ -1215,7 +1549,7 @@
         <div class="book-pages"></div>
         <div class="book-cover">
           <div class="cover-fallback">Истории,<br>из которых<br>ты состоишь</div>
-          <img id="coverImage" src="assets/cover.png" alt="Обложка книги «Истории, из которых ты состоишь»">
+          <img id="coverImage" src="assets/cover.webp" fetchpriority="high" decoding="async" alt="Обложка книги «Истории, из которых ты состоишь»">
         </div>
       </div>
       <div class="home-actions">
@@ -1248,7 +1582,7 @@
       <div class="intro-art">
         <div class="art-slot" data-art-slot>
           <div class="art-fallback" aria-hidden="true"></div>
-          <img src="assets/guardians/tanya-intro.png" alt="Таня, Хранитель выбора">
+          <img data-src="assets/guardians/tanya-intro.png" loading="lazy" decoding="async" alt="Таня, Хранитель выбора">
         </div>
       </div>
       <div class="intro-copy">
@@ -1329,7 +1663,7 @@
       <div class="password-art">
         <div class="art-slot" data-art-slot>
           <div class="art-fallback" aria-hidden="true"></div>
-          <img src="assets/guardians/tanya-task.png" alt="Таня, Хранитель выбора">
+          <img data-src="assets/guardians/tanya-task.png" loading="lazy" decoding="async" alt="Таня, Хранитель выбора">
         </div>
       </div>
       <div class="missing-copy">
@@ -1369,8 +1703,17 @@
   <section id="readerScreen" class="screen hidden">
     <div class="reader-shell">
       <div id="readerBook" class="reader-book" aria-live="polite">
-        <article id="readerLeftPage" class="reader-page"></article>
-        <article id="readerRightPage" class="reader-page"></article>
+        <div class="reader-page-stack left" aria-hidden="true"></div>
+        <div class="reader-page-stack right" aria-hidden="true"></div>
+        <article id="readerLeftPage" class="reader-page left-page"></article>
+        <article id="readerRightPage" class="reader-page right-page"></article>
+        <div id="pageTurner" class="page-turner hidden" aria-hidden="true">
+          <div class="turn-sheet">
+            <article id="turnFront" class="turn-face turn-front"></article>
+            <article id="turnBack" class="turn-face turn-back"></article>
+          </div>
+        </div>
+        <div class="reader-gutter" aria-hidden="true"></div>
       </div>
       <div class="reader-controls">
         <button type="button" id="readerPrev" class="secondary prev">← Назад</button>
@@ -1451,7 +1794,7 @@
       <div class="modal-art">
         <div class="art-slot" data-art-slot>
           <div class="art-fallback" aria-hidden="true"></div>
-          <img id="modalImage" src="" alt="">
+          <img id="modalImage" alt="">
         </div>
       </div>
       <div class="modal-copy">
@@ -1478,8 +1821,8 @@
     (() => {
       "use strict";
 
-      const STORAGE_KEY = "katyaBookProgressV5";
-      const OLD_STORAGE_KEY = "katyaBookProgressV4";
+      const STORAGE_KEY = "katyaBookProgressV6";
+      const OLD_STORAGE_KEY = "katyaBookProgressV5";
       const CORRECT_PASSWORD = "пупупу";
 
       const defaultProgress = {
@@ -1543,7 +1886,7 @@
           id: "july-2020-photo",
           storyId: "july-2020",
           type: "image",
-          src: "assets/album/july-2020.jpg",
+          src: "assets/album/july-2020.webp",
           date: "Июль 2020",
           title: "Месяц, с которого всё началось",
           guardian: "Таня · Хранитель выбора"
@@ -1553,7 +1896,6 @@
           storyId: "coffee-2026",
           type: "video",
           src: "assets/album/coffee-2026.mp4",
-          poster: "assets/album/coffee-2026.jpg",
           date: "24 июля 2026",
           title: "Две маленькие чашки",
           guardian: "Таня · Хранитель выбора"
@@ -1563,6 +1905,7 @@
       const stories = {
         "july-2020": {
           id: "july-2020",
+          order: 202007,
           date: "Июль 2020",
           title: "Месяц, с которого всё началось",
           guardian: "Хранитель выбора",
@@ -1661,6 +2004,7 @@
         },
         "coffee-2026": {
           id: "coffee-2026",
+          order: 20260724,
           date: "24 июля 2026",
           title: "Две маленькие чашки",
           guardian: "Хранитель выбора",
@@ -1715,6 +2059,8 @@
       let currentStoryId = progress.currentStoryId || "july-2020";
       let currentPageIndex = 0;
       let currentRestoreStoryId = "july-2020";
+      let readerMode = "story";
+      let isPageTurning = false;
       let previousFocus = null;
       let toastTimer = null;
       const filledCups = new Set();
@@ -1732,11 +2078,26 @@
       const passwordFeedback = document.getElementById("passwordFeedback");
       const guardianModal = document.getElementById("guardianModal");
       const mediaModal = document.getElementById("mediaModal");
+      const readerBook = document.getElementById("readerBook");
+      const pageTurner = document.getElementById("pageTurner");
+      const turnFront = document.getElementById("turnFront");
+      const turnBack = document.getElementById("turnBack");
 
       function migrateOldProgress() {
         try {
           const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY) || "null");
           if (!old) return null;
+          if (old.firstStoryStage) {
+            return {
+              ...defaultProgress,
+              ...old,
+              unlockedStories: Array.isArray(old.unlockedStories) ? old.unlockedStories : [],
+              unlockedGuardians: Array.isArray(old.unlockedGuardians) && old.unlockedGuardians.length
+                ? old.unlockedGuardians
+                : ["tanya"],
+              unlockedMedia: Array.isArray(old.unlockedMedia) ? old.unlockedMedia : []
+            };
+          }
           const migrated = { ...defaultProgress };
           migrated.hasOpenedBook = Boolean(old.hasOpenedBook);
           migrated.introSeen = Boolean(old.introSeen);
@@ -1790,6 +2151,8 @@
         if (id === "contentsScreen") renderContents();
         if (id === "albumScreen") renderAlbum();
         if (id === "homeScreen") resetBookVisual();
+        loadDeferredImages(target);
+        initializeArtSlots(target);
       }
 
       function updateNavigation() {
@@ -1801,16 +2164,15 @@
 
       function updateHomeButton() {
         let label = "Открыть книгу";
-        if (progress.introSeen && progress.firstStoryStage === "not-started") label = "Начать первую историю";
-        if (progress.firstStoryStage === "prelude") label = "Продолжить первую историю";
-        if (progress.firstStoryStage === "password") label = "Вернуться к потерянной странице";
-        if (progress.firstStoryStage === "restored" && !progress.unlockedMedia.includes("july-2020-photo")) {
-          label = "Открыть восстановленную историю";
+        if (progress.unlockedStories.length > 0) {
+          label = "Открыть книгу";
+        } else if (progress.introSeen && progress.firstStoryStage === "not-started") {
+          label = "Начать первую историю";
+        } else if (progress.firstStoryStage === "prelude") {
+          label = "Продолжить первую историю";
+        } else if (progress.firstStoryStage === "password") {
+          label = "Вернуться к потерянной странице";
         }
-        if (progress.unlockedMedia.includes("july-2020-photo") && progress.secondStoryStage !== "restored") {
-          label = "Продолжить книгу";
-        }
-        if (progress.unlockedStories.length >= 2) label = "Открыть книгу";
         openBookButton.textContent = label;
       }
 
@@ -1823,6 +2185,10 @@
       }
 
       function routeFromBook() {
+        if (progress.unlockedStories.length > 0) {
+          openBookContents();
+          return;
+        }
         if (!progress.introSeen) {
           runGuardianSearch();
           return;
@@ -1862,7 +2228,7 @@
         window.setTimeout(() => {
           resetBookVisual();
           routeFromBook();
-        }, firstOpen ? 1320 : 720);
+        }, firstOpen ? 1320 : 1050);
       }
 
       function runGuardianSearch() {
@@ -1931,8 +2297,72 @@
         return window.matchMedia("(max-width: 760px)").matches ? 1 : 2;
       }
 
+      function sortedUnlockedStories() {
+        return Object.values(stories)
+          .filter((story) => progress.unlockedStories.includes(story.id))
+          .sort((a, b) => a.order - b.order);
+      }
+
+      function bookContentsPages() {
+        const unlocked = sortedUnlockedStories();
+        const storyButtons = unlocked.map((story) => `
+          <button type="button" class="book-toc-item" data-open-story="${story.id}">
+            <small>${story.date}</small>
+            <strong>${story.title}</strong>
+            <span class="book-toc-arrow" aria-hidden="true">›</span>
+          </button>
+        `).join("");
+
+        let pending = "";
+        if (progress.unlockedMedia.includes("july-2020-photo") && progress.secondStoryStage !== "restored") {
+          pending = `
+            <button type="button" class="book-toc-pending" data-continue-search="coffee-2026">
+              <small>Следующая потерянная страница</small>
+              <strong>Продолжить поиск истории</strong>
+              <span class="book-toc-arrow" aria-hidden="true">›</span>
+            </button>
+          `;
+        }
+
+        return [
+          {
+            kind: "title",
+            html: `
+              <div class="reader-meta">Истории, из которых ты состоишь</div>
+              <div class="chapter-number">✦</div>
+              <h1>Оглавление</h1>
+              <p>Все восстановленные главы расположены в хронологическом порядке.</p>
+            `
+          },
+          {
+            kind: "contents",
+            html: `
+              <div class="reader-meta">Собранные страницы</div>
+              <h2>Выбери историю</h2>
+              <div class="book-toc-list">
+                ${storyButtons || "<p>Пока ни одна история не восстановлена.</p>"}
+                ${pending}
+              </div>
+              <p class="book-toc-note">Каждая новая восстановленная история появится здесь.</p>
+            `
+          }
+        ];
+      }
+
+      function activeReaderPages() {
+        return readerMode === "contents" ? bookContentsPages() : stories[currentStoryId]?.pages || [];
+      }
+
+      function openBookContents() {
+        readerMode = "contents";
+        currentPageIndex = 0;
+        renderReader();
+        showScreen("readerScreen");
+      }
+
       function openStoryReader(storyId, pageIndex = 0) {
         if (!stories[storyId]) return;
+        readerMode = "story";
         currentStoryId = storyId;
         currentPageIndex = Math.max(0, Math.min(pageIndex, stories[storyId].pages.length - 1));
         saveProgress();
@@ -1940,87 +2370,233 @@
         showScreen("readerScreen");
       }
 
-      function renderReader(turnDirection = "") {
-        const story = stories[currentStoryId];
-        if (!story) return;
+      function pageClassNames(page, side = "") {
+        const classes = [];
+        if (!page) classes.push("empty");
+        if (page?.kind === "title") classes.push("chapter-title-page");
+        if (page?.kind === "contents") classes.push("book-contents-page");
+        if (side) classes.push(side);
+        return classes;
+      }
+
+      function pageMarkup(page, pageIndex, includeNumber = true) {
+        if (!page) return "";
+        const number = includeNumber ? `<span class="page-number">${pageIndex + 1}</span>` : "";
+        return `${page.html}${number}`;
+      }
+
+      function renderStaticPage(element, page, pageIndex, sideClass) {
+        element.className = `reader-page ${sideClass}`;
+        pageClassNames(page).forEach((className) => element.classList.add(className));
+        element.innerHTML = pageMarkup(page, pageIndex);
+      }
+
+      function renderTurnFace(element, page, pageIndex, faceClass) {
+        element.className = `turn-face ${faceClass}`;
+        pageClassNames(page).forEach((className) => element.classList.add(className));
+        element.innerHTML = pageMarkup(page, pageIndex);
+      }
+
+      function renderReader() {
+        const pages = activeReaderPages();
         const perView = pagesPerView();
         if (perView === 2 && currentPageIndex % 2 !== 0) currentPageIndex -= 1;
+        currentPageIndex = Math.max(0, Math.min(currentPageIndex, Math.max(0, pages.length - 1)));
+
         const left = document.getElementById("readerLeftPage");
         const right = document.getElementById("readerRightPage");
-        const pages = story.pages;
-        const leftPage = pages[currentPageIndex];
-        const rightPage = perView === 2 ? pages[currentPageIndex + 1] : null;
-
-        renderReaderPage(left, leftPage, currentPageIndex, story, turnDirection);
-        renderReaderPage(right, rightPage, currentPageIndex + 1, story, turnDirection);
+        renderStaticPage(left, pages[currentPageIndex], currentPageIndex, "left-page");
+        renderStaticPage(right, perView === 2 ? pages[currentPageIndex + 1] : null, currentPageIndex + 1, "right-page");
         right.classList.toggle("hidden", perView === 1);
 
         const prev = document.getElementById("readerPrev");
         const next = document.getElementById("readerNext");
-        prev.disabled = currentPageIndex <= 0;
-        next.disabled = currentPageIndex + perView >= pages.length;
+        prev.disabled = isPageTurning || currentPageIndex <= 0;
+        next.disabled = isPageTurning || currentPageIndex + perView >= pages.length;
+
         const visibleEnd = Math.min(currentPageIndex + perView, pages.length);
-        document.getElementById("readerCounter").textContent = perView === 1
-          ? `Страница ${currentPageIndex + 1} из ${pages.length}`
-          : `Страницы ${currentPageIndex + 1}–${visibleEnd} из ${pages.length}`;
+        document.getElementById("readerCounter").textContent = readerMode === "contents"
+          ? "Оглавление книги"
+          : (perView === 1
+              ? `Страница ${currentPageIndex + 1} из ${pages.length}`
+              : `Страницы ${currentPageIndex + 1}–${visibleEnd} из ${pages.length}`);
 
-        const extra = document.getElementById("readerExtraActions");
-        extra.innerHTML = "";
-        const atEnd = currentPageIndex + perView >= pages.length;
-        if (atEnd) {
-          const mediaFound = progress.unlockedMedia.includes(story.mediaId);
-          const mediaButton = document.createElement("button");
-          mediaButton.type = "button";
-          mediaButton.className = "primary";
-          mediaButton.textContent = mediaFound ? "Посмотреть сохранённый момент" : "Открыть сохранённый момент";
-          mediaButton.addEventListener("click", () => openMediaModal(story.mediaId, true));
-          extra.appendChild(mediaButton);
-
-          if (story.id === "july-2020" && mediaFound && progress.secondStoryStage !== "restored") {
-            const nextStoryButton = document.createElement("button");
-            nextStoryButton.type = "button";
-            nextStoryButton.className = "secondary";
-            nextStoryButton.textContent = "Перейти к следующей истории";
-            nextStoryButton.addEventListener("click", () => {
-              progress.secondStoryStage = "available";
-              saveProgress();
-              resetCoffeeGame();
-              showScreen("coffeeChallengeScreen");
-            });
-            extra.appendChild(nextStoryButton);
-          }
-
-          const homeButton = document.createElement("button");
-          homeButton.type = "button";
-          homeButton.className = "ghost";
-          homeButton.textContent = "Закрыть книгу";
-          homeButton.addEventListener("click", () => showScreen("homeScreen"));
-          extra.appendChild(homeButton);
-        }
+        bindReaderActions();
+        renderReaderExtraActions();
       }
 
-      function renderReaderPage(element, page, pageIndex, story, turnDirection) {
-        element.className = "reader-page";
-        if (!page) {
-          element.classList.add("empty");
-          element.innerHTML = "";
+      function bindReaderActions() {
+        document.querySelectorAll("[data-open-story]").forEach((button) => {
+          button.addEventListener("click", () => transitionFromContentsToStory(button.dataset.openStory));
+        });
+        document.querySelectorAll("[data-continue-search]").forEach((button) => {
+          button.addEventListener("click", () => {
+            progress.secondStoryStage = "available";
+            saveProgress();
+            resetCoffeeGame();
+            showScreen("coffeeChallengeScreen");
+          });
+        });
+      }
+
+      function renderReaderExtraActions() {
+        const extra = document.getElementById("readerExtraActions");
+        extra.innerHTML = "";
+        if (readerMode !== "story") {
+          const close = document.createElement("button");
+          close.type = "button";
+          close.className = "ghost";
+          close.textContent = "Закрыть книгу";
+          close.addEventListener("click", () => showScreen("homeScreen"));
+          extra.appendChild(close);
           return;
         }
-        if (page.kind === "title") element.classList.add("chapter-title-page");
-        if (turnDirection) {
-          element.classList.add(turnDirection === "next" ? "is-turning-next" : "is-turning-prev");
+
+        const story = stories[currentStoryId];
+        const pages = story.pages;
+        const atEnd = currentPageIndex + pagesPerView() >= pages.length;
+        if (!atEnd) return;
+
+        const mediaFound = progress.unlockedMedia.includes(story.mediaId);
+        const mediaButton = document.createElement("button");
+        mediaButton.type = "button";
+        mediaButton.className = "primary";
+        mediaButton.textContent = mediaFound ? "Посмотреть сохранённый момент" : "Открыть сохранённый момент";
+        mediaButton.addEventListener("click", () => openMediaModal(story.mediaId, true));
+        extra.appendChild(mediaButton);
+
+        if (story.id === "july-2020" && mediaFound && progress.secondStoryStage !== "restored") {
+          const nextStoryButton = document.createElement("button");
+          nextStoryButton.type = "button";
+          nextStoryButton.className = "secondary";
+          nextStoryButton.textContent = "Перейти к следующей истории";
+          nextStoryButton.addEventListener("click", () => {
+            progress.secondStoryStage = "available";
+            saveProgress();
+            resetCoffeeGame();
+            showScreen("coffeeChallengeScreen");
+          });
+          extra.appendChild(nextStoryButton);
         }
-        element.innerHTML = `${page.html}<span class="page-number">${pageIndex + 1}</span>`;
+
+        const contentsButton = document.createElement("button");
+        contentsButton.type = "button";
+        contentsButton.className = "secondary";
+        contentsButton.textContent = "Вернуться в оглавление";
+        contentsButton.addEventListener("click", () => transitionStoryToContents());
+        extra.appendChild(contentsButton);
+
+        const homeButton = document.createElement("button");
+        homeButton.type = "button";
+        homeButton.className = "ghost";
+        homeButton.textContent = "Закрыть книгу";
+        homeButton.addEventListener("click", () => showScreen("homeScreen"));
+        extra.appendChild(homeButton);
+      }
+
+      function prepareTurner(direction, frontPage, frontIndex, backPage, backIndex) {
+        pageTurner.className = `page-turner ${direction > 0 ? "next" : "prev"}`;
+        renderTurnFace(turnFront, frontPage, frontIndex, "turn-front");
+        renderTurnFace(turnBack, backPage, backIndex, "turn-back");
+        void pageTurner.offsetWidth;
+      }
+
+      function completeTurn(callback) {
+        window.setTimeout(() => {
+          pageTurner.className = "page-turner hidden";
+          readerBook.classList.remove("is-turning");
+          isPageTurning = false;
+          callback();
+        }, 1090);
       }
 
       function turnReader(direction) {
+        if (isPageTurning) return;
+        const pages = activeReaderPages();
         const perView = pagesPerView();
-        const step = perView;
-        const pages = stories[currentStoryId].pages;
-        const nextIndex = currentPageIndex + direction * step;
+        const nextIndex = currentPageIndex + direction * perView;
         if (nextIndex < 0 || nextIndex >= pages.length) return;
-        currentPageIndex = nextIndex;
-        renderReader(direction > 0 ? "next" : "prev");
+
+        isPageTurning = true;
+        readerBook.classList.add("is-turning");
+        const left = document.getElementById("readerLeftPage");
+        const right = document.getElementById("readerRightPage");
+
+        if (perView === 1) {
+          renderStaticPage(left, pages[nextIndex], nextIndex, "left-page");
+          const frontPage = pages[currentPageIndex];
+          const backPage = pages[nextIndex];
+          prepareTurner(direction, frontPage, currentPageIndex, backPage, nextIndex);
+        } else if (direction > 0) {
+          renderStaticPage(left, pages[currentPageIndex], currentPageIndex, "left-page");
+          renderStaticPage(right, pages[nextIndex + 1], nextIndex + 1, "right-page");
+          prepareTurner(direction, pages[currentPageIndex + 1], currentPageIndex + 1, pages[nextIndex], nextIndex);
+        } else {
+          renderStaticPage(left, pages[nextIndex], nextIndex, "left-page");
+          renderStaticPage(right, pages[currentPageIndex + 1], currentPageIndex + 1, "right-page");
+          prepareTurner(direction, pages[currentPageIndex], currentPageIndex, pages[nextIndex + 1], nextIndex + 1);
+        }
+
+        document.getElementById("readerPrev").disabled = true;
+        document.getElementById("readerNext").disabled = true;
+        completeTurn(() => {
+          currentPageIndex = nextIndex;
+          renderReader();
+        });
+      }
+
+      function transitionFromContentsToStory(storyId) {
+        if (isPageTurning || !stories[storyId]) return;
+        const currentPages = activeReaderPages();
+        const targetPages = stories[storyId].pages;
+        const perView = pagesPerView();
+        isPageTurning = true;
+        readerBook.classList.add("is-turning");
+        const left = document.getElementById("readerLeftPage");
+        const right = document.getElementById("readerRightPage");
+
+        if (perView === 1) {
+          renderStaticPage(left, targetPages[0], 0, "left-page");
+          prepareTurner(1, currentPages[currentPageIndex], currentPageIndex, targetPages[0], 0);
+        } else {
+          renderStaticPage(left, currentPages[currentPageIndex], currentPageIndex, "left-page");
+          renderStaticPage(right, targetPages[1], 1, "right-page");
+          prepareTurner(1, currentPages[currentPageIndex + 1], currentPageIndex + 1, targetPages[0], 0);
+        }
+
+        completeTurn(() => {
+          readerMode = "story";
+          currentStoryId = storyId;
+          currentPageIndex = 0;
+          saveProgress();
+          renderReader();
+        });
+      }
+
+      function transitionStoryToContents() {
+        if (isPageTurning) return;
+        const targetPages = bookContentsPages();
+        const currentPages = activeReaderPages();
+        const perView = pagesPerView();
+        isPageTurning = true;
+        readerBook.classList.add("is-turning");
+        const left = document.getElementById("readerLeftPage");
+        const right = document.getElementById("readerRightPage");
+
+        if (perView === 1) {
+          renderStaticPage(left, targetPages[0], 0, "left-page");
+          prepareTurner(1, currentPages[currentPageIndex], currentPageIndex, targetPages[0], 0);
+        } else {
+          renderStaticPage(left, currentPages[currentPageIndex], currentPageIndex, "left-page");
+          renderStaticPage(right, targetPages[1], 1, "right-page");
+          prepareTurner(1, currentPages[currentPageIndex + 1], currentPageIndex + 1, targetPages[0], 0);
+        }
+
+        completeTurn(() => {
+          readerMode = "contents";
+          currentPageIndex = 0;
+          renderReader();
+        });
       }
 
       function resetCoffeeGame() {
@@ -2075,7 +2651,7 @@
             <div class="guardian-image-wrap">
               <div class="art-slot" data-art-slot>
                 <div class="art-fallback" aria-hidden="true"></div>
-                <img src="${guardian.image}" alt="${guardian.name}">
+                <img data-src="${guardian.image}" loading="lazy" decoding="async" alt="${guardian.name}">
               </div>
             </div>
             <div class="guardian-card-body">
@@ -2099,13 +2675,17 @@
       function openGuardianModal(guardian) {
         previousFocus = document.activeElement;
         const image = document.getElementById("modalImage");
-        image.src = guardian.image;
+        image.removeAttribute("src");
+        image.dataset.src = guardian.image;
+        image.loading = "lazy";
+        image.decoding = "async";
         image.alt = `${guardian.name}, ${guardian.role}`;
         document.getElementById("modalName").textContent = guardian.name;
         document.getElementById("modalRole").textContent = guardian.role;
         document.getElementById("modalQuote").textContent = guardian.quote;
         document.getElementById("modalDescription").innerHTML = guardian.description;
         openModal(guardianModal);
+        loadDeferredImages(guardianModal);
         initializeArtSlots(guardianModal);
       }
 
@@ -2114,7 +2694,7 @@
         list.innerHTML = "";
         Object.values(stories)
           .filter((story) => progress.unlockedStories.includes(story.id))
-          .sort((a, b) => a.id === "july-2020" ? -1 : 1)
+          .sort((a, b) => a.order - b.order)
           .forEach((story) => {
             const item = document.createElement("button");
             item.type = "button";
@@ -2141,8 +2721,8 @@
             card.setAttribute("role", "button");
             card.style.setProperty("--tilt", `${index % 2 === 0 ? -1.1 : 1.2}deg`);
             const mediaMarkup = item.type === "image"
-              ? `<img src="${item.src}" alt="" data-media-preview><div class="media-missing hidden">Сохранённый момент</div>`
-              : `<img src="${item.poster}" alt="" data-media-preview><div class="media-missing hidden">Сохранённое видео</div><span class="play-badge" aria-hidden="true">▶</span>`;
+              ? `<img data-src="${item.src}" loading="lazy" decoding="async" alt="" data-media-preview><div class="media-missing hidden">Сохранённый момент</div>`
+              : `<div class="video-placeholder" data-media-preview aria-hidden="true"><span class="play-badge">▶</span><small>Видео</small></div>`;
             card.innerHTML = `
               <div class="album-thumb">${mediaMarkup}</div>
               <div class="album-meta">
@@ -2151,12 +2731,14 @@
                 <p class="album-guardian">${item.guardian}</p>
               </div>
             `;
-            const preview = card.querySelector("[data-media-preview]");
+            const preview = card.querySelector("img[data-media-preview]");
             const fallback = card.querySelector(".media-missing");
-            preview.addEventListener("error", () => {
-              preview.classList.add("hidden");
-              fallback.classList.remove("hidden");
-            });
+            if (preview && fallback) {
+              preview.addEventListener("error", () => {
+                preview.classList.add("hidden");
+                fallback.classList.remove("hidden");
+              });
+            }
             const open = () => openMediaModal(item.id, false);
             card.addEventListener("click", open);
             card.addEventListener("keydown", (event) => {
@@ -2167,6 +2749,7 @@
             });
             grid.appendChild(card);
           });
+        loadDeferredImages(grid);
       }
 
       function openMediaModal(mediaId, unlockOnClose) {
@@ -2183,8 +2766,9 @@
 
         if (item.type === "image") {
           const image = document.createElement("img");
-          image.src = item.src;
           image.alt = "";
+          image.decoding = "async";
+          image.src = item.src;
           image.addEventListener("error", () => {
             image.classList.add("hidden");
             fallback.classList.remove("hidden");
@@ -2192,15 +2776,16 @@
           held.appendChild(image);
         } else {
           const video = document.createElement("video");
-          video.src = item.src;
           video.controls = true;
           video.playsInline = true;
-          if (item.poster) video.poster = item.poster;
+          video.preload = "metadata";
           video.addEventListener("error", () => {
             video.classList.add("hidden");
             fallback.classList.remove("hidden");
           });
           held.appendChild(video);
+          video.src = item.src;
+          video.load();
         }
         held.appendChild(fallback);
         document.getElementById("mediaCaption").innerHTML = `<strong>${item.title}</strong><span>${item.date} · ${item.guardian}</span>`;
@@ -2253,6 +2838,14 @@
         toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2800);
       }
 
+      function loadDeferredImages(root = document) {
+        root.querySelectorAll("img[data-src]").forEach((image) => {
+          if (image.dataset.loadStarted === "true") return;
+          image.dataset.loadStarted = "true";
+          image.src = image.dataset.src;
+        });
+      }
+
       function initializeArtSlots(root = document) {
         root.querySelectorAll("[data-art-slot]").forEach((slot) => {
           const image = slot.querySelector("img");
@@ -2268,7 +2861,7 @@
           };
           image.addEventListener("load", markLoaded);
           image.addEventListener("error", markMissing);
-          if (image.complete) {
+          if (image.src && image.complete) {
             if (image.naturalWidth > 0) markLoaded();
             else markMissing();
           }
@@ -2297,7 +2890,7 @@
       }
       window.addEventListener("resize", () => {
         fitBookToCover();
-        if (currentScreenId() === "readerScreen") renderReader();
+        if (currentScreenId() === "readerScreen" && !isPageTurning) renderReader();
       });
 
       openBookButton.addEventListener("click", openBook);
@@ -2360,12 +2953,10 @@
         button.addEventListener("click", () => showScreen(button.dataset.screen));
       });
 
-      initializeArtSlots();
+      initializeArtSlots(document.getElementById("loadingScreen"));
       updateNavigation();
       updateHomeButton();
-      renderGuardians();
       renderContents();
-      renderAlbum();
       resetBookVisual();
     })();
   </script>
