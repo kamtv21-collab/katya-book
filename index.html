@@ -17,14 +17,11 @@
       --olive: #7b7d62;
       --line: rgba(103, 72, 58, .14);
       --shadow: rgba(67, 44, 38, .18);
+      --nav-height: 68px;
     }
 
     * { box-sizing: border-box; }
-
-    html, body {
-      min-height: 100%;
-      margin: 0;
-    }
+    html, body { min-height: 100%; margin: 0; }
 
     body {
       overflow-x: hidden;
@@ -43,7 +40,7 @@
       inset: 0;
       z-index: 100;
       pointer-events: none;
-      opacity: .25;
+      opacity: .24;
       background: repeating-linear-gradient(
         0deg,
         rgba(89, 64, 45, .028) 0,
@@ -54,7 +51,6 @@
     }
 
     body.modal-open { overflow: hidden; }
-
     button, input { font: inherit; }
     button { color: inherit; }
     button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
@@ -68,22 +64,18 @@
       min-height: 100svh;
       width: 100%;
       padding:
-        max(28px, env(safe-area-inset-top))
+        max(26px, env(safe-area-inset-top))
         max(18px, env(safe-area-inset-right))
-        max(90px, env(safe-area-inset-bottom))
+        max(92px, env(safe-area-inset-bottom))
         max(18px, env(safe-area-inset-left));
       display: grid;
       place-items: center;
       position: relative;
     }
 
-    .wrap {
-      width: min(1120px, 100%);
-      margin: 0 auto;
-    }
+    .wrap { width: min(1120px, 100%); margin: 0 auto; }
 
-    .primary,
-    .secondary {
+    .primary, .secondary, .ghost {
       border-radius: 999px;
       padding: 14px 24px;
       border: 0;
@@ -99,13 +91,18 @@
 
     .secondary {
       color: var(--wine-dark);
-      background: rgba(255, 250, 241, .74);
+      background: rgba(255, 250, 241, .78);
       border: 1px solid rgba(120, 55, 68, .22);
     }
 
-    .primary:hover,
-    .secondary:hover { transform: translateY(-2px); }
-    .primary:disabled { cursor: default; opacity: .55; transform: none; }
+    .ghost {
+      padding: 10px 15px;
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .primary:hover, .secondary:hover, .ghost:hover { transform: translateY(-2px); }
+    .primary:disabled, .secondary:disabled { cursor: default; opacity: .5; transform: none; }
 
     .eyebrow {
       margin: 0 0 8px;
@@ -117,27 +114,34 @@
 
     .topnav {
       position: fixed;
-      z-index: 60;
+      z-index: 70;
       left: 50%;
       bottom: max(14px, env(safe-area-inset-bottom));
       transform: translateX(-50%);
       display: flex;
-      gap: 7px;
+      gap: 6px;
+      max-width: calc(100% - 24px);
       padding: 7px;
+      overflow-x: auto;
       border: 1px solid rgba(103, 72, 58, .1);
       border-radius: 999px;
-      background: rgba(249, 241, 230, .84);
+      background: rgba(249, 241, 230, .88);
       box-shadow: 0 8px 30px rgba(67, 44, 38, .13);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(11px);
+      scrollbar-width: none;
     }
 
+    .topnav::-webkit-scrollbar { display: none; }
+
     .topnav button {
+      flex: 0 0 auto;
       padding: 10px 14px;
       border: 0;
       border-radius: 999px;
       cursor: pointer;
       color: var(--muted);
       background: transparent;
+      white-space: nowrap;
     }
 
     .topnav button.active {
@@ -145,7 +149,7 @@
       background: rgba(120, 55, 68, .1);
     }
 
-    /* Главный экран и физическая книга */
+    /* Главная книга */
 
     .home-layout {
       min-height: calc(100svh - 120px);
@@ -201,7 +205,7 @@
       box-shadow:
         inset 9px 0 15px rgba(43, 21, 20, .16),
         inset 0 0 0 1px rgba(255, 255, 255, .16);
-      transition: transform 1.12s cubic-bezier(.2, .7, .15, 1);
+      transition: transform 1.05s cubic-bezier(.2, .7, .15, 1);
     }
 
     .book-cover img {
@@ -210,7 +214,6 @@
       display: block;
       object-fit: contain;
       object-position: center;
-      transform: none;
     }
 
     .cover-fallback {
@@ -228,12 +231,15 @@
         #efe3d0;
     }
 
-    .book.is-opening {
+    .book.is-first-opening {
       pointer-events: none;
       animation: bookZoom 1.45s forwards cubic-bezier(.2, .7, .15, 1);
     }
 
-    .book.is-opening .book-cover { transform: rotateY(-165deg); }
+    .book.is-first-opening .book-cover,
+    .book.is-reopening .book-cover { transform: rotateY(-165deg); }
+
+    .book.is-reopening { pointer-events: none; }
 
     @keyframes bookZoom {
       0% { transform: scale(1); opacity: 1; }
@@ -241,23 +247,13 @@
       100% { transform: scale(2.45); opacity: 0; }
     }
 
-    .home-actions {
-      display: grid;
-      place-items: center;
-      gap: 10px;
-    }
+    .home-actions { display: grid; place-items: center; gap: 10px; }
+    .home-hint { margin: 0; color: var(--muted); font-size: 14px; text-align: center; }
 
-    .home-hint {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      text-align: center;
-    }
-
-    /* Универсальные иллюстрации */
+    /* Картинки хранителей */
 
     .art-slot {
-      min-height: 300px;
+      min-height: 280px;
       position: relative;
       display: grid;
       place-items: end center;
@@ -276,16 +272,11 @@
     .art-fallback {
       position: absolute;
       inset: 12% 7% 0;
-      display: grid;
-      place-items: center;
       border-radius: 48% 52% 42% 58% / 54% 48% 52% 46%;
-      color: rgba(85, 37, 47, .78);
       background:
         radial-gradient(circle at 35% 28%, rgba(168, 197, 198, .55), transparent 35%),
         radial-gradient(circle at 63% 68%, rgba(184, 117, 94, .32), transparent 42%),
         rgba(244, 232, 214, .7);
-      font-size: clamp(30px, 6vw, 56px);
-      font-style: italic;
     }
 
     .art-slot.has-image .art-fallback { display: none; }
@@ -360,7 +351,7 @@
 
     @keyframes watercolorBloom {
       from { opacity: 0; transform: scale(.55) rotate(-7deg); filter: blur(16px); }
-      to { opacity: 1; transform: scale(1) rotate(0); filter: blur(2px); }
+      to { opacity: 1; transform: scale(1); filter: blur(2px); }
     }
 
     @keyframes sketchReveal {
@@ -386,23 +377,16 @@
       text-transform: uppercase;
     }
 
-    .loading-status.is-found {
-      animation: foundGlow .7s ease both;
-    }
+    .loading-status.is-found { animation: foundGlow .7s ease both; }
 
     @keyframes foundGlow {
       from { opacity: .25; filter: blur(3px); }
       to { opacity: 1; filter: blur(0); text-shadow: 0 0 18px rgba(185, 138, 78, .45); }
     }
 
-    .loading-description {
-      margin: 0;
-      color: var(--muted);
-      font-size: 18px;
-      line-height: 1.65;
-    }
+    .loading-description { margin: 0; color: var(--muted); font-size: 18px; line-height: 1.65; }
 
-    /* Вступление хранителя */
+    /* Вступление */
 
     .intro-panel {
       width: min(1060px, 100%);
@@ -417,10 +401,7 @@
       box-shadow: 0 28px 70px rgba(67, 44, 38, .16);
     }
 
-    .intro-art {
-      min-height: 500px;
-      position: relative;
-    }
+    .intro-art { min-height: 500px; position: relative; }
 
     .intro-art::before {
       content: "";
@@ -434,11 +415,7 @@
         radial-gradient(circle at 60% 62%, rgba(184, 117, 94, .31), transparent 42%);
     }
 
-    .intro-art .art-slot {
-      width: min(100%, 395px);
-      height: 550px;
-      margin: 0 auto;
-    }
+    .intro-art .art-slot { width: min(100%, 395px); height: 550px; margin: 0 auto; }
 
     .intro-copy {
       max-height: min(72svh, 700px);
@@ -448,8 +425,7 @@
       scrollbar-color: rgba(120, 55, 68, .28) transparent;
     }
 
-    .intro-copy h1,
-    .section-heading h1 {
+    .intro-copy h1, .section-heading h1 {
       margin: 0;
       font-size: clamp(42px, 7vw, 72px);
       font-weight: 400;
@@ -463,24 +439,14 @@
       text-transform: uppercase;
     }
 
-    .intro-text {
-      font-size: 18px;
-      line-height: 1.7;
-    }
-
+    .intro-text { font-size: 18px; line-height: 1.7; }
     .intro-text p { margin: 0 0 1em; }
     .intro-text strong { color: var(--wine-dark); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 24px;
-    }
+    /* Первая прочитанная страница до потери */
 
-    /* Страницы первой истории */
-
-    .story-book {
+    .prelude-book {
       width: min(1000px, 100%);
       min-height: min(80svh, 720px);
       display: grid;
@@ -492,7 +458,8 @@
       box-shadow: 0 30px 80px rgba(67, 44, 38, .2);
     }
 
-    .story-book::before {
+    .prelude-book::before,
+    .reader-book::before {
       content: "";
       position: absolute;
       z-index: 4;
@@ -505,42 +472,26 @@
       box-shadow: 0 0 18px rgba(76, 49, 39, .13);
     }
 
-    .story-page {
+    .paper-page {
       min-width: 0;
-      padding: clamp(34px, 5vw, 62px);
+      padding: clamp(32px, 5vw, 60px);
       position: relative;
+      overflow: hidden;
       background:
-        linear-gradient(rgba(255, 251, 243, .74), rgba(247, 236, 218, .84)),
+        linear-gradient(rgba(255, 251, 243, .76), rgba(247, 236, 218, .86)),
         repeating-linear-gradient(0deg, transparent 0 4px, rgba(91, 63, 45, .018) 5px);
     }
 
-    .story-page.decorative {
+    .paper-page.decorative {
       display: grid;
       place-items: center;
-      overflow: hidden;
       background:
         radial-gradient(circle at 35% 35%, rgba(164, 193, 195, .32), transparent 38%),
         radial-gradient(circle at 68% 70%, rgba(190, 130, 105, .25), transparent 42%),
         #efe2cf;
     }
 
-    .story-page.decorative::before,
-    .story-page.decorative::after {
-      content: "";
-      position: absolute;
-      width: 70%;
-      height: 28%;
-      border-radius: 48% 52% 42% 58%;
-      background: rgba(255, 248, 237, .64);
-      transform: rotate(-8deg);
-    }
-
-    .story-page.decorative::before { top: 15%; left: -8%; }
-    .story-page.decorative::after { right: -12%; bottom: 13%; transform: rotate(8deg); }
-
-    .story-mark {
-      position: relative;
-      z-index: 2;
+    .year-mark {
       width: min(72%, 280px);
       aspect-ratio: 1;
       display: grid;
@@ -552,38 +503,30 @@
       background: rgba(255, 250, 242, .5);
     }
 
-    .story-copy {
-      max-width: 490px;
-      margin: 0 auto;
-    }
-
-    .story-copy h1,
-    .missing-copy h1 {
+    .page-copy { max-width: 490px; margin: 0 auto; }
+    .page-copy h1, .missing-copy h1 {
       margin: 0 0 22px;
-      font-size: clamp(38px, 5.5vw, 64px);
+      font-size: clamp(36px, 5.2vw, 62px);
       font-weight: 400;
       line-height: 1.05;
     }
 
-    .story-copy p,
-    .missing-copy p {
+    .page-copy p, .missing-copy p {
       margin: 0 0 1em;
       color: #5f4a43;
-      font-size: clamp(17px, 2vw, 20px);
-      line-height: 1.7;
+      font-size: clamp(16px, 1.7vw, 19px);
+      line-height: 1.67;
     }
 
     .page-number {
       position: absolute;
-      right: 32px;
-      bottom: 23px;
-      color: rgba(80, 55, 47, .52);
+      right: 30px;
+      bottom: 22px;
+      color: rgba(80, 55, 47, .5);
       font-size: 14px;
     }
 
-    .turn-action { margin-top: 26px; }
-
-    /* Потерянная страница и пароль */
+    /* Потерянная страница */
 
     .missing-sheet {
       width: min(920px, 100%);
@@ -612,17 +555,8 @@
       opacity: .45;
     }
 
-    .password-art .art-slot {
-      height: 430px;
-      width: min(100%, 300px);
-      margin: 0 auto;
-    }
-
-    .password-box {
-      display: flex;
-      gap: 10px;
-      margin-top: 25px;
-    }
+    .password-art .art-slot { height: 430px; width: min(100%, 300px); margin: 0 auto; }
+    .password-box { display: flex; gap: 10px; margin-top: 25px; }
 
     .password-input {
       width: 100%;
@@ -650,11 +584,7 @@
       background: rgba(54, 35, 32, .76);
     }
 
-    .restored-content {
-      position: relative;
-      z-index: 3;
-      text-align: center;
-    }
+    .restored-content { position: relative; z-index: 3; text-align: center; }
 
     .restored-page {
       width: min(72vw, 380px);
@@ -672,27 +602,13 @@
 
     @keyframes materialize {
       from { opacity: 0; filter: blur(18px); transform: scale(.75) rotate(-4deg); }
-      to { opacity: 1; filter: blur(0); transform: scale(1) rotate(0); }
+      to { opacity: 1; filter: blur(0); transform: scale(1); }
     }
 
-    .restored-content h1 {
-      margin: 0;
-      font-size: clamp(42px, 7vw, 72px);
-      font-weight: 400;
-    }
+    .restored-content h1 { margin: 0; font-size: clamp(42px, 7vw, 72px); font-weight: 400; }
+    .restored-content p { color: #eadbc3; font-size: 18px; }
 
-    .restored-content p {
-      color: #eadbc3;
-      font-size: 18px;
-    }
-
-    .particles {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
+    .particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
     .particle {
       position: absolute;
       width: 5px;
@@ -709,53 +625,234 @@
       to { opacity: 0; transform: translateY(-170px) scale(1.1); }
     }
 
-    /* Полная восстановленная история */
+    /* Настоящая перелистываемая книга */
 
-    .full-story {
-      width: min(980px, 100%);
-      padding: clamp(34px, 6vw, 70px);
+    .reader-shell {
+      width: min(1120px, 100%);
+      display: grid;
+      justify-items: center;
+      gap: 16px;
+    }
+
+    .reader-book {
+      width: min(1080px, 100%);
+      height: min(76svh, 720px);
+      min-height: 560px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px 28px 28px 18px;
+      background: #f7ecdc;
+      box-shadow: 0 32px 88px rgba(57, 36, 30, .24);
+      perspective: 1800px;
+    }
+
+    .reader-page {
+      min-width: 0;
+      height: 100%;
+      padding: clamp(28px, 4vw, 52px);
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(255, 251, 243, .84), rgba(247, 235, 216, .9)),
+        repeating-linear-gradient(0deg, transparent 0 4px, rgba(91, 63, 45, .019) 5px);
+    }
+
+    .reader-page.is-turning-next { animation: pageTurnNext .48s ease both; transform-origin: left center; }
+    .reader-page.is-turning-prev { animation: pageTurnPrev .48s ease both; transform-origin: right center; }
+
+    @keyframes pageTurnNext {
+      0% { opacity: 1; transform: rotateY(0); }
+      50% { opacity: .35; transform: rotateY(-72deg); }
+      100% { opacity: 1; transform: rotateY(0); }
+    }
+
+    @keyframes pageTurnPrev {
+      0% { opacity: 1; transform: rotateY(0); }
+      50% { opacity: .35; transform: rotateY(72deg); }
+      100% { opacity: 1; transform: rotateY(0); }
+    }
+
+    .reader-page.empty {
+      background:
+        radial-gradient(circle at 30% 30%, rgba(164, 193, 195, .2), transparent 35%),
+        linear-gradient(rgba(255, 251, 243, .78), rgba(247, 235, 216, .88));
+    }
+
+    .reader-meta {
+      margin-bottom: 18px;
+      color: var(--wine);
+      font: 700 11px/1.5 Arial, sans-serif;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .reader-page h1 {
+      margin: 0 0 18px;
+      font-size: clamp(34px, 4.3vw, 58px);
+      font-weight: 400;
+      line-height: 1.04;
+    }
+
+    .reader-page h2 {
+      margin: 0 0 16px;
+      font-size: clamp(27px, 3vw, 42px);
+      font-weight: 400;
+      line-height: 1.08;
+    }
+
+    .reader-page p {
+      margin: 0 0 .92em;
+      color: #5f4a43;
+      font-size: clamp(15px, 1.45vw, 18px);
+      line-height: 1.62;
+    }
+
+    .reader-page blockquote {
+      margin: 26px 0 0;
+      padding: 18px 0 0 18px;
+      border-top: 1px solid rgba(120, 55, 68, .15);
+      border-left: 3px solid var(--gold);
+      color: var(--wine-dark);
+      font-size: clamp(18px, 2vw, 23px);
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    .chapter-title-page {
+      display: grid;
+      align-content: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at 28% 30%, rgba(164, 193, 195, .26), transparent 34%),
+        radial-gradient(circle at 72% 70%, rgba(190, 130, 105, .22), transparent 40%),
+        linear-gradient(rgba(255, 251, 243, .84), rgba(247, 235, 216, .9));
+    }
+
+    .chapter-title-page .chapter-number {
+      margin-bottom: 20px;
+      color: var(--gold);
+      font-size: 54px;
+      line-height: 1;
+    }
+
+    .reader-controls {
+      width: min(1080px, 100%);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .reader-controls .prev { justify-self: start; }
+    .reader-controls .next { justify-self: end; }
+    .reader-counter { color: var(--muted); font-size: 14px; text-align: center; }
+
+    .reader-extra-actions {
+      min-height: 48px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Вторая история: две чашки */
+
+    .coffee-panel {
+      width: min(920px, 100%);
+      padding: clamp(30px, 5vw, 58px);
       border: 1px solid var(--line);
       border-radius: 28px;
       background: rgba(250, 243, 232, .84);
       box-shadow: 0 28px 70px rgba(67, 44, 38, .16);
-    }
-
-    .full-story h1 {
-      margin: 0 0 26px;
-      font-size: clamp(42px, 7vw, 72px);
-      font-weight: 400;
-      line-height: 1.02;
-    }
-
-    .story-columns {
-      columns: 2 320px;
-      column-gap: 54px;
-    }
-
-    .story-columns p {
-      break-inside: avoid;
-      margin: 0 0 1.05em;
-      color: #5f4a43;
-      font-size: 18px;
-      line-height: 1.75;
-    }
-
-    .story-ending {
-      margin-top: 26px !important;
-      padding-top: 24px;
-      border-top: 1px solid rgba(120, 55, 68, .16);
-      color: var(--wine-dark) !important;
-      font-style: italic;
-      font-size: 21px !important;
-    }
-
-    /* Хранители */
-
-    .section-heading {
-      margin-bottom: 34px;
       text-align: center;
     }
 
+    .coffee-panel h1 {
+      margin: 0 0 16px;
+      font-size: clamp(40px, 7vw, 70px);
+      font-weight: 400;
+    }
+
+    .coffee-panel > p:not(.eyebrow) {
+      max-width: 680px;
+      margin: 0 auto 26px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .coffee-game {
+      max-width: 620px;
+      margin: 30px auto 0;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sachet {
+      width: 150px;
+      margin: 0 auto;
+      padding: 18px 10px;
+      border-radius: 10px;
+      color: #4d3a31;
+      background: linear-gradient(135deg, #b7b3ae, #e5e0d9);
+      box-shadow: 0 10px 24px rgba(70, 50, 40, .16);
+      font: 700 13px/1.35 Arial, sans-serif;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .cups {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .cup-button {
+      min-height: 175px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(120, 55, 68, .16);
+      border-radius: 22px;
+      cursor: pointer;
+      background: rgba(255, 250, 242, .7);
+      transition: transform .2s ease, background .25s ease;
+    }
+
+    .cup-button:hover { transform: translateY(-3px); }
+    .cup-button.filled { background: rgba(190, 153, 111, .22); }
+
+    .cup-shape {
+      width: 92px;
+      height: 78px;
+      position: relative;
+      border: 5px solid #bca48d;
+      border-top: 0;
+      border-radius: 0 0 38px 38px;
+      background: linear-gradient(to top, #8c5c3e 0 0) no-repeat bottom / 100% 0%;
+      transition: background-size .55s ease;
+    }
+
+    .cup-button.filled .cup-shape { background-size: 100% 72%; }
+
+    .cup-shape::after {
+      content: "";
+      position: absolute;
+      top: 14px;
+      right: -27px;
+      width: 26px;
+      height: 35px;
+      border: 5px solid #bca48d;
+      border-left: 0;
+      border-radius: 0 22px 22px 0;
+    }
+
+    .coffee-feedback { min-height: 24px; color: var(--wine); font-weight: 700; }
+
+    /* Хранители */
+
+    .section-heading { margin-bottom: 34px; text-align: center; }
     .section-heading p:last-child {
       max-width: 720px;
       margin: 14px auto 0;
@@ -788,15 +885,8 @@
       box-shadow: 0 18px 45px rgba(67, 44, 38, .12);
     }
 
-    .guardian-card.unlocked {
-      cursor: pointer;
-      transition: transform .24s ease, box-shadow .24s ease;
-    }
-
-    .guardian-card.unlocked:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 25px 52px rgba(67, 44, 38, .16);
-    }
+    .guardian-card.unlocked { cursor: pointer; transition: transform .24s ease, box-shadow .24s ease; }
+    .guardian-card.unlocked:hover { transform: translateY(-5px); box-shadow: 0 25px 52px rgba(67, 44, 38, .16); }
 
     .guardian-image-wrap {
       height: 325px;
@@ -806,30 +896,16 @@
     }
 
     .guardian-image-wrap .art-slot { width: 100%; height: 100%; }
-
     .guardian-card-body { padding: 22px; }
-
-    .guardian-card-body h2 {
-      margin: 0;
-      font-size: 30px;
-      font-weight: 400;
-    }
-
-    .guardian-quote {
-      margin: 0;
-      color: var(--muted);
-      font-style: italic;
-      line-height: 1.55;
-    }
+    .guardian-card-body h2 { margin: 0; font-size: 30px; font-weight: 400; }
+    .guardian-quote { margin: 0; color: var(--muted); font-style: italic; line-height: 1.55; }
 
     .guardian-card.locked {
       display: grid;
       place-items: center;
       color: rgba(120, 55, 68, .28);
       font-size: 72px;
-      background:
-        radial-gradient(circle at center, rgba(120, 55, 68, .1), transparent 54%),
-        rgba(239, 228, 212, .75);
+      background: radial-gradient(circle at center, rgba(120, 55, 68, .1), transparent 54%), rgba(239, 228, 212, .75);
     }
 
     .guardian-card.locked small {
@@ -842,16 +918,116 @@
       text-align: center;
     }
 
-    /* Модальное окно хранителя */
+    /* Оглавление */
+
+    .contents-list { width: min(860px, 100%); margin: 0 auto; display: grid; gap: 14px; }
+
+    .contents-item {
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(250, 243, 232, .8);
+    }
+
+    button.contents-item { width: 100%; color: inherit; text-align: left; cursor: pointer; }
+    .contents-date, .contents-status {
+      color: var(--wine);
+      font: 700 12px/1.4 Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .contents-title { font-size: 21px; }
+    .contents-status { color: var(--olive); }
+
+    /* Фотоальбом */
+
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 28px;
+      align-items: start;
+    }
+
+    .album-card {
+      padding: 14px 14px 22px;
+      border: 1px solid rgba(103, 72, 58, .12);
+      border-radius: 7px;
+      cursor: pointer;
+      background: #fbf4e8;
+      box-shadow: 0 18px 36px rgba(67, 44, 38, .16);
+      transform: rotate(var(--tilt, -1deg));
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .album-card:hover {
+      transform: rotate(0) translateY(-5px);
+      box-shadow: 0 26px 50px rgba(67, 44, 38, .2);
+    }
+
+    .album-thumb {
+      aspect-ratio: 4 / 3;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(164, 193, 195, .32), transparent 35%),
+        radial-gradient(circle at 70% 70%, rgba(190, 130, 105, .24), transparent 38%),
+        #e9ddcc;
+    }
+
+    .album-thumb img, .album-thumb video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .album-thumb .media-missing {
+      padding: 25px;
+      color: var(--muted);
+      text-align: center;
+      font-style: italic;
+    }
+
+    .play-badge {
+      position: absolute;
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: white;
+      background: rgba(85, 37, 47, .78);
+      box-shadow: 0 8px 24px rgba(42, 25, 23, .25);
+      font-size: 23px;
+    }
+
+    .album-meta { padding: 18px 8px 0; }
+    .album-date {
+      margin: 0 0 6px;
+      color: var(--wine);
+      font: 700 11px/1.4 Arial, sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .album-meta h2 { margin: 0 0 8px; font-size: 25px; font-weight: 400; }
+    .album-guardian { margin: 0; color: var(--muted); font-style: italic; }
+
+    /* Общие модальные окна */
 
     .modal {
       position: fixed;
-      z-index: 90;
+      z-index: 95;
       inset: 0;
       padding: 20px;
       display: grid;
       place-items: center;
-      background: rgba(54, 35, 32, .58);
+      background: rgba(54, 35, 32, .62);
       backdrop-filter: blur(8px);
     }
 
@@ -871,7 +1047,7 @@
 
     .modal-close {
       position: absolute;
-      z-index: 5;
+      z-index: 8;
       top: 14px;
       right: 14px;
       width: 44px;
@@ -879,19 +1055,13 @@
       border: 0;
       border-radius: 50%;
       cursor: pointer;
-      background: rgba(120, 55, 68, .08);
+      background: rgba(120, 55, 68, .1);
       font-size: 25px;
       line-height: 1;
     }
 
     .modal-art .art-slot { width: 100%; height: 520px; }
-
-    .modal-copy h2 {
-      margin: 0;
-      font-size: clamp(42px, 6vw, 66px);
-      font-weight: 400;
-    }
-
+    .modal-copy h2 { margin: 0; font-size: clamp(42px, 6vw, 66px); font-weight: 400; }
     .modal-quote {
       margin: 26px 0;
       padding-left: 17px;
@@ -901,77 +1071,123 @@
       font-style: italic;
       line-height: 1.55;
     }
+    .modal-description { color: var(--muted); font-size: 18px; line-height: 1.7; }
 
-    .modal-description {
+    /* Фото словно подняли со страницы */
+
+    .media-stage {
+      width: min(920px, 100%);
+      max-height: 90svh;
+      display: grid;
+      justify-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .held-media {
+      width: min(82vw, 720px);
+      max-height: 76svh;
+      padding: 13px 13px 34px;
+      position: relative;
+      border-radius: 5px;
+      background: #fff9ef;
+      box-shadow: 0 35px 90px rgba(10, 5, 5, .5);
+      transform: rotate(-1.2deg);
+      animation: liftPhoto .72s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    @keyframes liftPhoto {
+      from { opacity: 0; filter: blur(10px); transform: translateY(55px) scale(.74) rotate(-6deg); }
+      to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1) rotate(-1.2deg); }
+    }
+
+    .held-media img, .held-media video {
+      width: 100%;
+      max-height: calc(76svh - 47px);
+      display: block;
+      object-fit: contain;
+      background: #e9ddcc;
+    }
+
+    .held-media .media-missing {
+      min-height: 360px;
+      display: grid;
+      place-items: center;
+      padding: 35px;
       color: var(--muted);
-      font-size: 18px;
-      line-height: 1.7;
+      text-align: center;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(164, 193, 195, .32), transparent 35%),
+        radial-gradient(circle at 70% 70%, rgba(190, 130, 105, .24), transparent 38%),
+        #e9ddcc;
     }
 
-    /* Оглавление */
-
-    .contents-list {
-      width: min(840px, 100%);
-      margin: 0 auto;
-      display: grid;
-      gap: 14px;
+    .media-caption {
+      color: #f8ecdb;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,.35);
     }
+    .media-caption strong { display: block; font-size: 21px; font-weight: 400; }
+    .media-caption span { font-size: 14px; opacity: .82; }
 
-    .contents-item {
-      display: grid;
-      grid-template-columns: 120px 1fr auto;
-      gap: 18px;
-      align-items: center;
-      padding: 18px 20px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(250, 243, 232, .8);
+    .toast {
+      position: fixed;
+      z-index: 110;
+      top: max(18px, env(safe-area-inset-top));
+      left: 50%;
+      max-width: calc(100% - 32px);
+      padding: 13px 20px;
+      border-radius: 999px;
+      color: #fff8ee;
+      background: rgba(85, 37, 47, .94);
+      box-shadow: 0 14px 36px rgba(45, 25, 23, .26);
+      transform: translate(-50%, -30px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .3s ease;
     }
-
-    .contents-date,
-    .contents-status {
-      color: var(--wine);
-      font: 700 12px/1.4 Arial, sans-serif;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .contents-title { font-size: 21px; }
-    .contents-status { color: var(--olive); }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
 
     @media (max-width: 760px) {
       .screen { padding-bottom: 92px; }
-
-      .topnav {
-        width: calc(100% - 24px);
-        justify-content: center;
-        overflow-x: auto;
-      }
-
-      .loading-paper,
-      .intro-panel,
-      .story-book,
-      .missing-sheet,
-      .modal-box {
-        grid-template-columns: 1fr;
-      }
-
+      .loading-paper, .intro-panel, .prelude-book, .missing-sheet, .modal-box { grid-template-columns: 1fr; }
       .guardian-drawing { min-height: 330px; }
       .guardian-drawing .art-slot { height: 390px; }
-
       .intro-art { min-height: 330px; }
       .intro-art .art-slot { height: 370px; }
       .intro-copy { max-height: none; overflow: visible; }
-
-      .story-book::before { display: none; }
-      .story-page.decorative { min-height: 260px; }
-      .story-page { padding: 32px 26px 64px; }
-
-      .password-art .art-slot { height: 330px; }
+      .prelude-book::before, .reader-book::before { display: none; }
+      .paper-page.decorative { min-height: 245px; }
+      .paper-page { padding: 30px 24px 62px; }
+      .password-art .art-slot { height: 315px; }
       .password-box { flex-direction: column; }
-
-      .modal-art .art-slot { height: 330px; }
+      .modal-art .art-slot { height: 320px; }
       .contents-item { grid-template-columns: 1fr; }
+
+      .reader-book {
+        width: min(94vw, 560px);
+        height: min(72svh, 680px);
+        min-height: 510px;
+        grid-template-columns: 1fr;
+        border-radius: 18px;
+      }
+      .reader-page { padding: 25px 23px 48px; }
+      .reader-page + .reader-page { display: none; }
+      .reader-page p { font-size: clamp(15px, 3.9vw, 17px); line-height: 1.55; }
+      .reader-page h1 { font-size: clamp(34px, 9vw, 50px); }
+      .reader-controls { grid-template-columns: auto 1fr auto; }
+      .reader-extra-actions { max-width: 94vw; }
+      .cups { gap: 12px; }
+      .cup-button { min-height: 145px; }
+      .album-grid { grid-template-columns: 1fr; }
+      .held-media { width: min(92vw, 720px); }
+    }
+
+    @media (max-height: 680px) and (min-width: 761px) {
+      .reader-book { height: 76svh; min-height: 500px; }
+      .reader-page { padding: 24px 34px; }
+      .reader-page p { font-size: 15px; line-height: 1.48; }
+      .reader-page h1 { font-size: 40px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -987,8 +1203,9 @@
 <body>
   <nav id="topNav" class="topnav hidden" aria-label="Навигация по книге">
     <button type="button" data-screen="homeScreen">Книга</button>
-    <button type="button" id="guardiansNav" class="hidden" data-screen="guardiansScreen">Хранители</button>
     <button type="button" id="contentsNav" class="hidden" data-screen="contentsScreen">Оглавление</button>
+    <button type="button" id="guardiansNav" class="hidden" data-screen="guardiansScreen">Хранители</button>
+    <button type="button" id="albumNav" class="hidden" data-screen="albumScreen">Фотоальбом</button>
   </nav>
 
   <main id="homeScreen" class="screen">
@@ -1001,7 +1218,6 @@
           <img id="coverImage" src="assets/cover.png" alt="Обложка книги «Истории, из которых ты состоишь»">
         </div>
       </div>
-
       <div class="home-actions">
         <button type="button" id="openBookButton" class="primary">Открыть книгу</button>
         <p class="home-hint">Можно нажать на саму книгу</p>
@@ -1013,11 +1229,10 @@
     <div class="loading-paper">
       <div class="guardian-drawing">
         <div class="art-slot" data-art-slot>
-          <div class="art-fallback">Таня</div>
+          <div class="art-fallback" aria-hidden="true"></div>
           <img src="assets/guardians/tanya-loading.png" alt="">
         </div>
       </div>
-
       <div class="loading-copy">
         <h1>Поиск хранителя...</h1>
         <p id="loadingStatus" class="loading-status">Книга вспоминает, кому доверено начало</p>
@@ -1032,16 +1247,14 @@
     <article class="intro-panel">
       <div class="intro-art">
         <div class="art-slot" data-art-slot>
-          <div class="art-fallback">Таня</div>
+          <div class="art-fallback" aria-hidden="true"></div>
           <img src="assets/guardians/tanya-intro.png" alt="Таня, Хранитель выбора">
         </div>
       </div>
-
       <div class="intro-copy">
         <p class="eyebrow">Первый хранитель</p>
         <h1>Таня</h1>
         <p class="guardian-role">Хранитель выбора</p>
-
         <div class="intro-text">
           <p><strong>Катя, привет.</strong></p>
           <p>У каждой истории есть начало.</p>
@@ -1072,7 +1285,6 @@
           <p><strong>Добро пожаловать в нашу историю.</strong></p>
           <p>Готова найти первую страницу?</p>
         </div>
-
         <div class="actions">
           <button type="button" id="startStoryButton" class="primary">Начать поиск страниц</button>
           <button type="button" id="meetGuardianButton" class="secondary">Познакомиться с хранителем</button>
@@ -1081,14 +1293,13 @@
     </article>
   </section>
 
-  <section id="storyStartScreen" class="screen hidden">
-    <article class="story-book">
-      <div class="story-page decorative" aria-hidden="true">
-        <div class="story-mark">2020</div>
+  <section id="storyPreludeScreen" class="screen hidden">
+    <article class="prelude-book">
+      <div class="paper-page decorative" aria-hidden="true">
+        <div class="year-mark">2020</div>
       </div>
-
-      <div class="story-page">
-        <div class="story-copy">
+      <div class="paper-page">
+        <div class="page-copy">
           <p class="eyebrow">Июль 2020 года</p>
           <h1>Месяц, с которого всё началось</h1>
           <p>
@@ -1101,16 +1312,12 @@
             квартиры и на время поселилась в квартире Дениса, Гриши и Бори, пока
             их не было в городе.
           </p>
+          <p>А потом ты ответила на одну из моих историй в Instagram.</p>
           <p>
-            А потом ты ответила на одну из моих историй в Instagram.
-          </p>
-          <p>
-            Обычное сообщение. Совсем небольшой выбор, который в тот момент вряд ли
+            Обычное сообщение. Совсем небольшой выбор, который тогда вряд ли
             казался началом чего-то важного.
           </p>
-          <div class="turn-action">
-            <button type="button" id="turnMissingPageButton" class="primary">Перевернуть страницу</button>
-          </div>
+          <button type="button" id="turnMissingPageButton" class="primary">Перевернуть страницу</button>
         </div>
         <span class="page-number">1</span>
       </div>
@@ -1121,45 +1328,29 @@
     <article class="missing-sheet">
       <div class="password-art">
         <div class="art-slot" data-art-slot>
-          <div class="art-fallback">Таня</div>
+          <div class="art-fallback" aria-hidden="true"></div>
           <img src="assets/guardians/tanya-task.png" alt="Таня, Хранитель выбора">
         </div>
       </div>
-
       <div class="missing-copy">
-        <p class="eyebrow">Следующая страница потеряна</p>
-        <h1>Продолжение исчезло</h1>
+        <p class="eyebrow">Продолжение потеряно</p>
+        <h1>Следующей страницы нет</h1>
         <p>
-          Здесь должна была быть следующая часть истории. Но эта страница исчезла
+          Здесь должна была быть следующая часть истории. Но страница исчезла
           прежде, чем мы успели вернуть её в книгу.
         </p>
         <p>
-          Я знаю, как её найти. Но на этот раз одного нажатия недостаточно.
-          <strong>Тебе придётся встретиться со мной.</strong>
+          Я знаю, как её открыть. Для этого тебе придётся встретиться со мной.
+          Когда мы увидимся, я передам тебе пароль.
         </p>
-        <p>
-          Когда мы увидимся, я передам тебе пароль, который откроет продолжение этой истории.
-        </p>
-
-        <form id="passwordForm" novalidate>
-          <label class="eyebrow" for="passwordInput">Пароль хранителя</label>
+        <form id="passwordForm">
           <div class="password-box">
-            <input
-              id="passwordInput"
-              class="password-input"
-              type="text"
-              autocomplete="off"
-              placeholder="Введите пароль"
-              aria-describedby="passwordFeedback"
-            >
+            <input id="passwordInput" class="password-input" type="text" autocomplete="off" placeholder="Введите пароль хранителя" aria-label="Пароль хранителя">
             <button type="submit" class="primary">Вернуть страницу</button>
           </div>
           <p id="passwordFeedback" class="password-hint" aria-live="polite"></p>
         </form>
-
-        <p style="font-size:15px;color:var(--muted)">
-          Книгу можно закрыть: она запомнит, где ты остановилась.
-        </p>
+        <p>Книга запомнит это место, даже если ты закроешь сайт.</p>
       </div>
     </article>
   </section>
@@ -1170,55 +1361,46 @@
       <div class="restored-page"></div>
       <p class="eyebrow" style="color:#e8c989">Страница возвращена</p>
       <h1>Воспоминание восстановлено</h1>
-      <p>Страница найдена и добавлена в книгу.</p>
-      <button type="button" id="openRestoredStoryButton" class="primary">Прочитать восстановленную историю</button>
+      <p id="restoredMessage">Страница найдена и добавлена в книгу.</p>
+      <button type="button" id="openRestoredStoryButton" class="primary">Открыть восстановленную историю</button>
     </div>
   </section>
 
-  <section id="storyScreen" class="screen hidden">
-    <article class="full-story">
-      <p class="eyebrow">Восстановленная история · Июль 2020</p>
-      <h1>Месяц, с которого всё началось</h1>
-
-      <div class="story-columns">
-        <p>
-          После того сообщения мы начали видеться почти каждый день. Ты жила в пустой
-          квартире Дениса, Гриши и Бори, а я — совсем рядом, на Толстого, недалеко от
-          метро «Октябрьская». Эта квартира быстро стала нашим местом на весь июль.
-        </p>
-        <p>
-          Я готовила куриное филе с помидорами и сыром, складывала его в контейнеры и
-          приносила к тебе. Мы ели бутерброды, пили чай, смотрели фильмы и разговаривали
-          обо всём подряд.
-        </p>
-        <p>
-          Иногда разговоры заканчивались только в пять или шесть утра. Тогда мы выходили
-          на улицу и шли к набережной встречать рассвет, будто ночь ещё не должна была
-          заканчиваться.
-        </p>
-        <p>
-          Накопленные бонусы «Спасибо» превращались в Burger King или McDonald’s, а самые
-          обычные прогулки — в события, которые почему-то запомнились лучше многих больших
-          праздников.
-        </p>
-        <p>
-          Ты переживала сложный период в отношениях. Позже в похожей ситуации оказалась я,
-          и тогда уже ты была рядом со мной. Кажется, именно в тот месяц мы впервые поняли,
-          что можем не только смеяться и гулять, но и по-настоящему поддерживать друг друга.
-        </p>
-        <p>
-          Этот странный маленький мир закончился, когда вернулся Гриша. Но вместе с июлем
-          не закончилось главное — наша дружба.
-        </p>
-        <p class="story-ending">
-          Поэтому для меня именно июль 2020 года — настоящее начало истории, которая после
-          этого больше не прерывалась.
-        </p>
+  <section id="readerScreen" class="screen hidden">
+    <div class="reader-shell">
+      <div id="readerBook" class="reader-book" aria-live="polite">
+        <article id="readerLeftPage" class="reader-page"></article>
+        <article id="readerRightPage" class="reader-page"></article>
       </div>
+      <div class="reader-controls">
+        <button type="button" id="readerPrev" class="secondary prev">← Назад</button>
+        <div id="readerCounter" class="reader-counter"></div>
+        <button type="button" id="readerNext" class="secondary next">Дальше →</button>
+      </div>
+      <div id="readerExtraActions" class="reader-extra-actions"></div>
+    </div>
+  </section>
 
-      <div class="actions">
-        <button type="button" id="backToBookButton" class="primary">Вернуться к книге</button>
-        <button type="button" id="storyGuardiansButton" class="secondary">Открыть хранителей</button>
+  <section id="coffeeChallengeScreen" class="screen hidden">
+    <article class="coffee-panel">
+      <p class="eyebrow">24 июля 2026 года · Хранитель выбора</p>
+      <h1>Две маленькие чашки</h1>
+      <p>
+        В серой коробке остался один пакетик кофе 3-в-1, а чашек было две.
+        Раздели пакетик между обеими чашками, чтобы вернуть эту страницу.
+      </p>
+      <div class="coffee-game">
+        <div class="sachet">Кофе 3-в-1<br>с шоколадной присыпкой</div>
+        <div class="cups">
+          <button type="button" class="cup-button" data-cup="left" aria-label="Насыпать кофе в первую чашку">
+            <span class="cup-shape" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="cup-button" data-cup="right" aria-label="Насыпать кофе во вторую чашку">
+            <span class="cup-shape" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p id="coffeeFeedback" class="coffee-feedback" aria-live="polite">Нажми на обе чашки.</p>
+        <button type="button" id="restoreCoffeeButton" class="primary" disabled>Вернуть страницу</button>
       </div>
     </article>
   </section>
@@ -1229,12 +1411,11 @@
         <p class="eyebrow">Люди, которым доверены страницы</p>
         <h1>Хранители</h1>
         <p>
-          Каждый хранитель отвечает за часть нашей истории. Новые лица будут появляться
-          здесь по мере того, как ты возвращаешь потерянные страницы в книгу.
+          Каждый хранитель отвечает за часть нашей истории. Новые лица будут
+          появляться здесь по мере того, как ты возвращаешь страницы в книгу.
         </p>
         <p id="guardianCount" class="guardian-count"></p>
       </header>
-
       <div id="guardianGrid" class="guardian-grid"></div>
     </div>
   </section>
@@ -1242,25 +1423,37 @@
   <section id="contentsScreen" class="screen hidden">
     <div class="wrap">
       <header class="section-heading">
-        <p class="eyebrow">Собранные страницы</p>
+        <p class="eyebrow">Восстановленные главы</p>
         <h1>Оглавление</h1>
-        <p>Истории расположены по времени, в котором они произошли.</p>
+        <p>Все истории расположены в хронологическом порядке.</p>
       </header>
       <div id="contentsList" class="contents-list"></div>
     </div>
   </section>
 
+  <section id="albumScreen" class="screen hidden">
+    <div class="wrap">
+      <header class="section-heading">
+        <p class="eyebrow">Сохранённые моменты</p>
+        <h1>Фотоальбом</h1>
+        <p>
+          Фотографии и видео появляются здесь после того, как ты находишь их
+          внутри восстановленных историй.
+        </p>
+      </header>
+      <div id="albumGrid" class="album-grid"></div>
+    </div>
+  </section>
+
   <div id="guardianModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalName">
     <article class="modal-box">
-      <button type="button" id="modalCloseButton" class="modal-close" aria-label="Закрыть карточку хранителя">×</button>
-
+      <button type="button" class="modal-close" data-close-modal="guardianModal" aria-label="Закрыть">×</button>
       <div class="modal-art">
         <div class="art-slot" data-art-slot>
-          <div class="art-fallback">Таня</div>
+          <div class="art-fallback" aria-hidden="true"></div>
           <img id="modalImage" src="" alt="">
         </div>
       </div>
-
       <div class="modal-copy">
         <p class="eyebrow">Хранитель</p>
         <h2 id="modalName"></h2>
@@ -1271,20 +1464,33 @@
     </article>
   </div>
 
+  <div id="mediaModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Сохранённый момент">
+    <div class="media-stage">
+      <button type="button" class="modal-close" data-close-modal="mediaModal" aria-label="Закрыть">×</button>
+      <div id="heldMedia" class="held-media"></div>
+      <div id="mediaCaption" class="media-caption"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
   <script>
     (() => {
       "use strict";
 
-      const STORAGE_KEY = "katyaBookProgressV4";
-      const FIRST_STORY_ID = "july-2020";
+      const STORAGE_KEY = "katyaBookProgressV5";
+      const OLD_STORAGE_KEY = "katyaBookProgressV4";
       const CORRECT_PASSWORD = "пупупу";
 
       const defaultProgress = {
-        opened: false,
+        hasOpenedBook: false,
         introSeen: false,
-        storyStage: "start",
+        firstStoryStage: "not-started",
+        secondStoryStage: "locked",
         unlockedStories: [],
-        unlockedGuardians: ["tanya"]
+        unlockedGuardians: ["tanya"],
+        unlockedMedia: [],
+        currentStoryId: "july-2020"
       };
 
       const guardians = [
@@ -1301,10 +1507,7 @@
               случайных решений: ответить на сообщение, согласиться встретиться,
               задержаться ещё на час или выбрать дорогу, по которой раньше никогда не ходил.
             </p>
-            <p>
-              Иногда именно такой маленький выбор становится началом истории,
-              которая меняет жизнь.
-            </p>
+            <p>Иногда именно такой маленький выбор становится началом истории, которая меняет жизнь.</p>
           `
         },
         {
@@ -1313,7 +1516,7 @@
           role: "Хранитель времени",
           image: "assets/guardians/natasha-card.png",
           quote: "Время умеет менять всё. Но некоторые моменты оно делает только ценнее.",
-          description: "<p>Описание роли Наташи можно будет добавить позже.</p>"
+          description: "<p>Описание этого хранителя появится вместе с его историей.</p>"
         },
         {
           id: "denis",
@@ -1321,7 +1524,7 @@
           role: "Роль пока не выбрана",
           image: "assets/guardians/denis-card.png",
           quote: "Некоторые страницы невозможно написать в одиночку.",
-          description: "<p>Описание роли Дениса можно будет добавить позже.</p>"
+          description: "<p>Описание этого хранителя появится вместе с его историей.</p>"
         },
         {
           id: "marina",
@@ -1329,29 +1532,197 @@
           role: "Роль пока не выбрана",
           image: "assets/guardians/marina-card.png",
           quote: "Есть люди, которые помнят нас ещё до того, как мы сами научились понимать себя.",
-          description: "<p>Описание роли Марины можно будет добавить позже.</p>"
+          description: "<p>Описание этого хранителя появится вместе с его историей.</p>"
         },
-        { id: "guardian-5" },
-        { id: "guardian-6" }
+        { id: "guardian-5", name: "Неизвестный хранитель", role: "", image: "", quote: "", description: "" },
+        { id: "guardian-6", name: "Неизвестный хранитель", role: "", image: "", quote: "", description: "" }
       ];
 
-      const stories = [
+      const mediaItems = [
         {
-          id: "july-2020",
+          id: "july-2020-photo",
+          storyId: "july-2020",
+          type: "image",
+          src: "assets/album/july-2020.jpg",
           date: "Июль 2020",
-          title: "Месяц, с которого всё началось"
+          title: "Месяц, с которого всё началось",
+          guardian: "Таня · Хранитель выбора"
         },
         {
-          id: "coffee-2026",
+          id: "coffee-2026-video",
+          storyId: "coffee-2026",
+          type: "video",
+          src: "assets/album/coffee-2026.mp4",
+          poster: "assets/album/coffee-2026.jpg",
           date: "24 июля 2026",
-          title: "Две маленькие чашки кофе"
+          title: "Две маленькие чашки",
+          guardian: "Таня · Хранитель выбора"
         }
       ];
 
-      const screens = Array.from(document.querySelectorAll(".screen"));
+      const stories = {
+        "july-2020": {
+          id: "july-2020",
+          date: "Июль 2020",
+          title: "Месяц, с которого всё началось",
+          guardian: "Хранитель выбора",
+          guardianName: "Таня",
+          chapter: "Глава I",
+          mediaId: "july-2020-photo",
+          pages: [
+            {
+              kind: "title",
+              html: `
+                <div class="reader-meta">Таня · Хранитель выбора</div>
+                <div class="chapter-number">I</div>
+                <h1>Месяц, с которого всё началось</h1>
+                <p>Июль 2020 года</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">Июль 2020 · Начало</div>
+                <h2>Обычное сообщение</h2>
+                <p>
+                  К тому моменту мы были знакомы уже почти два года. Но знакомство ещё
+                  не успело стать настоящей дружбой: мы почти не общались, жили своими
+                  жизнями и не подозревали, насколько скоро всё изменится.
+                </p>
+                <p>
+                  Тем летом ты защитила диплом, окончила Нархоз, съехала с арендованной
+                  квартиры и на время поселилась в квартире Дениса, Гриши и Бори, пока
+                  их не было в городе.
+                </p>
+                <p>А потом ты ответила на одну из моих историй в Instagram.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">Июль 2020 · Наше место</div>
+                <h2>Почти каждый день</h2>
+                <p>
+                  После того сообщения мы начали видеться почти каждый день. Ты жила в
+                  пустой квартире Дениса, Гриши и Бори, а я — совсем рядом, на Толстого,
+                  недалеко от метро «Октябрьская».
+                </p>
+                <p>
+                  Эта квартира быстро стала нашим местом на весь июль. Я готовила куриное
+                  филе с помидорами и сыром, складывала его в контейнеры и приносила тебе.
+                </p>
+                <p>Мы ели бутерброды, пили чай, смотрели фильмы и разговаривали обо всём подряд.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">Июль 2020 · Рассветы</div>
+                <h2>Ночь не должна заканчиваться</h2>
+                <p>
+                  Иногда разговоры заканчивались только в пять или шесть утра. Тогда мы
+                  выходили на улицу и шли к набережной встречать рассвет, будто ночь ещё
+                  не должна была заканчиваться.
+                </p>
+                <p>
+                  Накопленные бонусы «Спасибо» превращались в Burger King или McDonald’s,
+                  а самые обычные прогулки — в события, которые почему-то запомнились
+                  лучше многих больших праздников.
+                </p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">Июль 2020 · Поддержка</div>
+                <h2>Стать по-настоящему близкими</h2>
+                <p>
+                  Ты переживала сложный период в отношениях. Позже в похожей ситуации
+                  оказалась я, и тогда уже ты была рядом со мной.
+                </p>
+                <p>
+                  Кажется, именно в тот месяц мы впервые поняли, что можем не только
+                  смеяться и гулять, но и по-настоящему поддерживать друг друга.
+                </p>
+                <p>Этот маленький мир закончился, когда вернулся Гриша. Но главное уже не закончилось.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">Июль 2020 · Финал главы</div>
+                <h2>Настоящее начало</h2>
+                <p>
+                  Июль закончился, квартира снова перестала быть только нашей, а ночные
+                  прогулки стали реже. Но после этого месяца мы уже не потерялись друг у друга.
+                </p>
+                <blockquote>
+                  Поэтому для меня именно июль 2020 года — настоящее начало истории,
+                  которая после этого больше не прерывалась.
+                </blockquote>
+              `
+            }
+          ]
+        },
+        "coffee-2026": {
+          id: "coffee-2026",
+          date: "24 июля 2026",
+          title: "Две маленькие чашки",
+          guardian: "Хранитель выбора",
+          guardianName: "Таня",
+          chapter: "Глава II",
+          mediaId: "coffee-2026-video",
+          pages: [
+            {
+              kind: "title",
+              html: `
+                <div class="reader-meta">Таня · Хранитель выбора</div>
+                <div class="chapter-number">II</div>
+                <h1>Две маленькие чашки</h1>
+                <p>24 июля 2026 года</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">24 июля 2026 · Домик</div>
+                <h2>Один пакетик на двоих</h2>
+                <p>
+                  Нас было восемь человек, мы сняли домик и, как это обычно бывает,
+                  привезли с собой много всего — кроме нормальных больших кружек.
+                </p>
+                <p>
+                  В серой коробке нашёлся кофе 3-в-1 с шоколадной присыпкой. Пакетик был
+                  один, маленьких чашек — две, поэтому порошок разделили между ними.
+                </p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">24 июля 2026 · Маленький эпизод</div>
+                <h2>Катя и две чашки</h2>
+                <p>
+                  В итоге ты сидела сразу с двумя крошечными чашками и пила из них по очереди.
+                  Сам по себе момент длился совсем недолго, но выглядел настолько по-катиному,
+                  что его невозможно было не снять.
+                </p>
+                <p>
+                  Иногда история сохраняется не из-за чего-то грандиозного, а потому что
+                  один человек на несколько минут становится очень похож на самого себя.
+                </p>
+                <blockquote>Один пакетик, две чашки и ещё один момент, который теперь останется с нами.</blockquote>
+              `
+            }
+          ]
+        }
+      };
+
+      let progress = loadProgress();
+      let currentStoryId = progress.currentStoryId || "july-2020";
+      let currentPageIndex = 0;
+      let currentRestoreStoryId = "july-2020";
+      let previousFocus = null;
+      let toastTimer = null;
+      const filledCups = new Set();
+
       const topNav = document.getElementById("topNav");
       const guardiansNav = document.getElementById("guardiansNav");
       const contentsNav = document.getElementById("contentsNav");
+      const albumNav = document.getElementById("albumNav");
       const book = document.getElementById("book");
       const coverImage = document.getElementById("coverImage");
       const openBookButton = document.getElementById("openBookButton");
@@ -1360,166 +1731,184 @@
       const passwordInput = document.getElementById("passwordInput");
       const passwordFeedback = document.getElementById("passwordFeedback");
       const guardianModal = document.getElementById("guardianModal");
-      const modalCloseButton = document.getElementById("modalCloseButton");
+      const mediaModal = document.getElementById("mediaModal");
 
-      let progress = loadProgress();
-      let transitionLocked = false;
-      let previousFocus = null;
+      function migrateOldProgress() {
+        try {
+          const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY) || "null");
+          if (!old) return null;
+          const migrated = { ...defaultProgress };
+          migrated.hasOpenedBook = Boolean(old.hasOpenedBook);
+          migrated.introSeen = Boolean(old.introSeen);
+          migrated.unlockedGuardians = Array.isArray(old.unlockedGuardians) && old.unlockedGuardians.length
+            ? old.unlockedGuardians
+            : ["tanya"];
+          if (old.storyStage === "password") migrated.firstStoryStage = "password";
+          if (old.storyStage === "restored" || (old.unlockedStories || []).includes("july-2020")) {
+            migrated.firstStoryStage = "restored";
+            migrated.unlockedStories = ["july-2020"];
+            migrated.secondStoryStage = "available";
+          }
+          return migrated;
+        } catch {
+          return null;
+        }
+      }
 
       function loadProgress() {
         try {
-          const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-          return {
-            ...defaultProgress,
-            ...stored,
-            unlockedStories: Array.isArray(stored.unlockedStories)
-              ? stored.unlockedStories
-              : [...defaultProgress.unlockedStories],
-            unlockedGuardians: Array.isArray(stored.unlockedGuardians)
-              ? stored.unlockedGuardians
-              : [...defaultProgress.unlockedGuardians]
-          };
-        } catch (error) {
-          console.warn("Не удалось прочитать сохранённый прогресс:", error);
+          const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+          if (stored) return { ...defaultProgress, ...stored };
+          return migrateOldProgress() || { ...defaultProgress };
+        } catch {
           return { ...defaultProgress };
         }
       }
 
       function saveProgress() {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-        } catch (error) {
-          console.warn("Не удалось сохранить прогресс:", error);
-        }
+        progress.currentStoryId = currentStoryId;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
         updateNavigation();
         updateHomeButton();
       }
 
       function currentScreenId() {
-        return screens.find((screen) => !screen.classList.contains("hidden"))?.id || "homeScreen";
+        return document.querySelector(".screen:not(.hidden)")?.id || "homeScreen";
       }
 
-      function showScreen(screenId) {
-        screens.forEach((screen) => screen.classList.toggle("hidden", screen.id !== screenId));
-        document.querySelectorAll("[data-screen]").forEach((button) => {
-          button.classList.toggle("active", button.dataset.screen === screenId);
+      function showScreen(id) {
+        closeAllModals();
+        document.querySelectorAll(".screen").forEach((screen) => screen.classList.add("hidden"));
+        const target = document.getElementById(id);
+        if (!target) return;
+        target.classList.remove("hidden");
+        document.querySelectorAll(".topnav button[data-screen]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.screen === id);
         });
-
-        if (screenId === "homeScreen") resetBookVisual();
-        if (screenId === "guardiansScreen") renderGuardians();
-        if (screenId === "contentsScreen") renderContents();
-
         window.scrollTo({ top: 0, behavior: "auto" });
+        if (id === "guardiansScreen") renderGuardians();
+        if (id === "contentsScreen") renderContents();
+        if (id === "albumScreen") renderAlbum();
+        if (id === "homeScreen") resetBookVisual();
       }
 
       function updateNavigation() {
-        topNav.classList.toggle("hidden", !progress.opened);
+        topNav.classList.toggle("hidden", !progress.hasOpenedBook);
         guardiansNav.classList.toggle("hidden", progress.unlockedGuardians.length < 1);
         contentsNav.classList.toggle("hidden", progress.unlockedStories.length < 2);
+        albumNav.classList.toggle("hidden", progress.unlockedMedia.length < 1);
       }
 
       function updateHomeButton() {
-        if (!progress.introSeen) {
-          openBookButton.textContent = "Открыть книгу";
-        } else if (progress.storyStage === "password") {
-          openBookButton.textContent = "Вернуться к поиску страницы";
-        } else if (progress.storyStage === "restored") {
-          openBookButton.textContent = "Открыть восстановленную историю";
-        } else {
-          openBookButton.textContent = "Продолжить чтение";
+        let label = "Открыть книгу";
+        if (progress.introSeen && progress.firstStoryStage === "not-started") label = "Начать первую историю";
+        if (progress.firstStoryStage === "prelude") label = "Продолжить первую историю";
+        if (progress.firstStoryStage === "password") label = "Вернуться к потерянной странице";
+        if (progress.firstStoryStage === "restored" && !progress.unlockedMedia.includes("july-2020-photo")) {
+          label = "Открыть восстановленную историю";
         }
+        if (progress.unlockedMedia.includes("july-2020-photo") && progress.secondStoryStage !== "restored") {
+          label = "Продолжить книгу";
+        }
+        if (progress.unlockedStories.length >= 2) label = "Открыть книгу";
+        openBookButton.textContent = label;
       }
 
       function resetBookVisual() {
-        transitionLocked = false;
-        book.classList.remove("is-opening");
+        book.classList.remove("is-first-opening", "is-reopening");
         book.style.opacity = "";
         book.style.transform = "";
+        const cover = book.querySelector(".book-cover");
+        cover.style.transform = "";
       }
 
-      function routeAfterBookOpening() {
+      function routeFromBook() {
         if (!progress.introSeen) {
-          showGuardianSearch();
+          runGuardianSearch();
           return;
         }
-
-        if (progress.storyStage === "password") {
+        if (progress.firstStoryStage === "not-started" || progress.firstStoryStage === "prelude") {
+          progress.firstStoryStage = "prelude";
+          saveProgress();
+          showScreen("storyPreludeScreen");
+          return;
+        }
+        if (progress.firstStoryStage === "password") {
           showScreen("passwordScreen");
-          setTimeout(() => passwordInput.focus(), 50);
           return;
         }
-
-        if (progress.storyStage === "restored") {
-          showScreen("storyScreen");
+        if (progress.firstStoryStage === "restored" && !progress.unlockedMedia.includes("july-2020-photo")) {
+          openStoryReader("july-2020", 0);
           return;
         }
-
-        showScreen("storyStartScreen");
+        if (progress.secondStoryStage === "available" || progress.secondStoryStage === "locked") {
+          progress.secondStoryStage = "available";
+          saveProgress();
+          resetCoffeeGame();
+          showScreen("coffeeChallengeScreen");
+          return;
+        }
+        if (progress.secondStoryStage === "restored") {
+          openStoryReader(currentStoryId && stories[currentStoryId] ? currentStoryId : "coffee-2026", 0);
+        }
       }
 
       function openBook() {
-        if (transitionLocked) return;
-
-        transitionLocked = true;
-        progress.opened = true;
+        if (book.classList.contains("is-first-opening") || book.classList.contains("is-reopening")) return;
+        const firstOpen = !progress.hasOpenedBook;
+        progress.hasOpenedBook = true;
         saveProgress();
-        book.classList.add("is-opening");
-
+        book.classList.add(firstOpen ? "is-first-opening" : "is-reopening");
         window.setTimeout(() => {
-          book.classList.remove("is-opening");
-          transitionLocked = false;
-          routeAfterBookOpening();
-        }, 1350);
+          resetBookVisual();
+          routeFromBook();
+        }, firstOpen ? 1320 : 720);
       }
 
-      function showGuardianSearch() {
+      function runGuardianSearch() {
         loadingStatus.textContent = "Книга вспоминает, кому доверено начало";
         loadingStatus.classList.remove("is-found");
-        loadingDescription.textContent =
-          "На чистой странице постепенно проступают акварельные краски и карандашные линии.";
+        loadingDescription.textContent = "На чистой странице постепенно проступают акварельные краски и карандашные линии.";
         showScreen("loadingScreen");
-
         window.setTimeout(() => {
           if (currentScreenId() !== "loadingScreen") return;
           loadingStatus.textContent = "Хранитель найден";
           loadingStatus.classList.add("is-found");
           loadingDescription.textContent = "Таня — Хранитель выбора";
-
           window.setTimeout(() => {
             if (currentScreenId() !== "loadingScreen") return;
             progress.introSeen = true;
             saveProgress();
             showScreen("introScreen");
-          }, 1100);
+          }, 1050);
         }, 4000);
       }
 
       function normalizePassword(value) {
-        return value
-          .toLocaleLowerCase("ru-RU")
-          .trim()
-          .replace(/[\s\-‐‑‒–—―−_.,!?]+/g, "");
+        return value.toLocaleLowerCase("ru-RU").trim().replace(/[\s\-‐‑‒–—―−_.,!?]+/g, "");
       }
 
       function handlePasswordSubmit(event) {
         event.preventDefault();
-        const normalized = normalizePassword(passwordInput.value);
-
-        if (normalized !== CORRECT_PASSWORD) {
-          passwordFeedback.textContent =
-            "Этот пароль не от моей страницы. Вспомни, что я сказала тебе при встрече.";
+        if (normalizePassword(passwordInput.value) !== CORRECT_PASSWORD) {
+          passwordFeedback.textContent = "Этот пароль не от моей страницы. Вспомни, что я сказала тебе при встрече.";
           passwordInput.setAttribute("aria-invalid", "true");
           passwordInput.focus();
           return;
         }
-
         passwordFeedback.textContent = "Хранитель узнал пароль.";
         passwordInput.removeAttribute("aria-invalid");
-        progress.storyStage = "restored";
-        if (!progress.unlockedStories.includes(FIRST_STORY_ID)) {
-          progress.unlockedStories.push(FIRST_STORY_ID);
-        }
+        progress.firstStoryStage = "restored";
+        if (!progress.unlockedStories.includes("july-2020")) progress.unlockedStories.push("july-2020");
+        progress.secondStoryStage = "locked";
+        currentRestoreStoryId = "july-2020";
+        currentStoryId = "july-2020";
         saveProgress();
+        showRestoredScreen("Страница найдена и добавлена в книгу.");
+      }
+
+      function showRestoredScreen(message) {
+        document.getElementById("restoredMessage").textContent = message;
         createParticles();
         showScreen("restoredScreen");
       }
@@ -1527,7 +1916,6 @@
       function createParticles() {
         const container = document.getElementById("particles");
         container.innerHTML = "";
-
         for (let index = 0; index < 42; index += 1) {
           const particle = document.createElement("span");
           particle.className = "particle";
@@ -1539,30 +1927,154 @@
         }
       }
 
+      function pagesPerView() {
+        return window.matchMedia("(max-width: 760px)").matches ? 1 : 2;
+      }
+
+      function openStoryReader(storyId, pageIndex = 0) {
+        if (!stories[storyId]) return;
+        currentStoryId = storyId;
+        currentPageIndex = Math.max(0, Math.min(pageIndex, stories[storyId].pages.length - 1));
+        saveProgress();
+        renderReader();
+        showScreen("readerScreen");
+      }
+
+      function renderReader(turnDirection = "") {
+        const story = stories[currentStoryId];
+        if (!story) return;
+        const perView = pagesPerView();
+        if (perView === 2 && currentPageIndex % 2 !== 0) currentPageIndex -= 1;
+        const left = document.getElementById("readerLeftPage");
+        const right = document.getElementById("readerRightPage");
+        const pages = story.pages;
+        const leftPage = pages[currentPageIndex];
+        const rightPage = perView === 2 ? pages[currentPageIndex + 1] : null;
+
+        renderReaderPage(left, leftPage, currentPageIndex, story, turnDirection);
+        renderReaderPage(right, rightPage, currentPageIndex + 1, story, turnDirection);
+        right.classList.toggle("hidden", perView === 1);
+
+        const prev = document.getElementById("readerPrev");
+        const next = document.getElementById("readerNext");
+        prev.disabled = currentPageIndex <= 0;
+        next.disabled = currentPageIndex + perView >= pages.length;
+        const visibleEnd = Math.min(currentPageIndex + perView, pages.length);
+        document.getElementById("readerCounter").textContent = perView === 1
+          ? `Страница ${currentPageIndex + 1} из ${pages.length}`
+          : `Страницы ${currentPageIndex + 1}–${visibleEnd} из ${pages.length}`;
+
+        const extra = document.getElementById("readerExtraActions");
+        extra.innerHTML = "";
+        const atEnd = currentPageIndex + perView >= pages.length;
+        if (atEnd) {
+          const mediaFound = progress.unlockedMedia.includes(story.mediaId);
+          const mediaButton = document.createElement("button");
+          mediaButton.type = "button";
+          mediaButton.className = "primary";
+          mediaButton.textContent = mediaFound ? "Посмотреть сохранённый момент" : "Открыть сохранённый момент";
+          mediaButton.addEventListener("click", () => openMediaModal(story.mediaId, true));
+          extra.appendChild(mediaButton);
+
+          if (story.id === "july-2020" && mediaFound && progress.secondStoryStage !== "restored") {
+            const nextStoryButton = document.createElement("button");
+            nextStoryButton.type = "button";
+            nextStoryButton.className = "secondary";
+            nextStoryButton.textContent = "Перейти к следующей истории";
+            nextStoryButton.addEventListener("click", () => {
+              progress.secondStoryStage = "available";
+              saveProgress();
+              resetCoffeeGame();
+              showScreen("coffeeChallengeScreen");
+            });
+            extra.appendChild(nextStoryButton);
+          }
+
+          const homeButton = document.createElement("button");
+          homeButton.type = "button";
+          homeButton.className = "ghost";
+          homeButton.textContent = "Закрыть книгу";
+          homeButton.addEventListener("click", () => showScreen("homeScreen"));
+          extra.appendChild(homeButton);
+        }
+      }
+
+      function renderReaderPage(element, page, pageIndex, story, turnDirection) {
+        element.className = "reader-page";
+        if (!page) {
+          element.classList.add("empty");
+          element.innerHTML = "";
+          return;
+        }
+        if (page.kind === "title") element.classList.add("chapter-title-page");
+        if (turnDirection) {
+          element.classList.add(turnDirection === "next" ? "is-turning-next" : "is-turning-prev");
+        }
+        element.innerHTML = `${page.html}<span class="page-number">${pageIndex + 1}</span>`;
+      }
+
+      function turnReader(direction) {
+        const perView = pagesPerView();
+        const step = perView;
+        const pages = stories[currentStoryId].pages;
+        const nextIndex = currentPageIndex + direction * step;
+        if (nextIndex < 0 || nextIndex >= pages.length) return;
+        currentPageIndex = nextIndex;
+        renderReader(direction > 0 ? "next" : "prev");
+      }
+
+      function resetCoffeeGame() {
+        filledCups.clear();
+        document.querySelectorAll(".cup-button").forEach((button) => button.classList.remove("filled"));
+        document.getElementById("coffeeFeedback").textContent = "Нажми на обе чашки.";
+        document.getElementById("restoreCoffeeButton").disabled = true;
+      }
+
+      function handleCupClick(button) {
+        const id = button.dataset.cup;
+        filledCups.add(id);
+        button.classList.add("filled");
+        const feedback = document.getElementById("coffeeFeedback");
+        const restore = document.getElementById("restoreCoffeeButton");
+        if (filledCups.size === 2) {
+          feedback.textContent = "Пакетик разделён между двумя чашками.";
+          restore.disabled = false;
+        } else {
+          feedback.textContent = "Одна чашка готова. Осталась вторая.";
+        }
+      }
+
+      function restoreCoffeeStory() {
+        if (filledCups.size < 2) return;
+        progress.secondStoryStage = "restored";
+        if (!progress.unlockedStories.includes("coffee-2026")) progress.unlockedStories.push("coffee-2026");
+        currentRestoreStoryId = "coffee-2026";
+        currentStoryId = "coffee-2026";
+        saveProgress();
+        showRestoredScreen("История с двумя чашками возвращена в книгу.");
+      }
+
       function renderGuardians() {
         const grid = document.getElementById("guardianGrid");
         const count = document.getElementById("guardianCount");
         grid.innerHTML = "";
         count.textContent = `Открыто хранителей: ${progress.unlockedGuardians.length} из ${guardians.length}`;
-
         guardians.forEach((guardian) => {
           const unlocked = progress.unlockedGuardians.includes(guardian.id);
           const card = document.createElement("article");
           card.className = `guardian-card ${unlocked ? "unlocked" : "locked"}`;
-
           if (!unlocked) {
             card.innerHTML = `?<small>Этот хранитель ещё не появился в книге</small>`;
             grid.appendChild(card);
             return;
           }
-
           card.tabIndex = 0;
           card.setAttribute("role", "button");
           card.setAttribute("aria-label", `Открыть карточку: ${guardian.name}, ${guardian.role}`);
           card.innerHTML = `
             <div class="guardian-image-wrap">
               <div class="art-slot" data-art-slot>
-                <div class="art-fallback">${guardian.name}</div>
+                <div class="art-fallback" aria-hidden="true"></div>
                 <img src="${guardian.image}" alt="${guardian.name}">
               </div>
             </div>
@@ -1572,7 +2084,6 @@
               <p class="guardian-quote">«${guardian.quote}»</p>
             </div>
           `;
-
           card.addEventListener("click", () => openGuardianModal(guardian));
           card.addEventListener("keydown", (event) => {
             if (event.key === "Enter" || event.key === " ") {
@@ -1582,47 +2093,164 @@
           });
           grid.appendChild(card);
         });
-
         initializeArtSlots(grid);
       }
 
       function openGuardianModal(guardian) {
         previousFocus = document.activeElement;
-        document.getElementById("modalImage").src = guardian.image;
-        document.getElementById("modalImage").alt = `${guardian.name}, ${guardian.role}`;
+        const image = document.getElementById("modalImage");
+        image.src = guardian.image;
+        image.alt = `${guardian.name}, ${guardian.role}`;
         document.getElementById("modalName").textContent = guardian.name;
         document.getElementById("modalRole").textContent = guardian.role;
         document.getElementById("modalQuote").textContent = guardian.quote;
         document.getElementById("modalDescription").innerHTML = guardian.description;
-        guardianModal.classList.remove("hidden");
-        document.body.classList.add("modal-open");
+        openModal(guardianModal);
         initializeArtSlots(guardianModal);
-        window.setTimeout(() => modalCloseButton.focus(), 0);
-      }
-
-      function closeGuardianModal() {
-        if (guardianModal.classList.contains("hidden")) return;
-        guardianModal.classList.add("hidden");
-        document.body.classList.remove("modal-open");
-        if (previousFocus instanceof HTMLElement) previousFocus.focus();
       }
 
       function renderContents() {
         const list = document.getElementById("contentsList");
         list.innerHTML = "";
-
-        stories
+        Object.values(stories)
           .filter((story) => progress.unlockedStories.includes(story.id))
+          .sort((a, b) => a.id === "july-2020" ? -1 : 1)
           .forEach((story) => {
-            const item = document.createElement("article");
+            const item = document.createElement("button");
+            item.type = "button";
             item.className = "contents-item";
             item.innerHTML = `
               <span class="contents-date">${story.date}</span>
               <span class="contents-title">${story.title}</span>
               <span class="contents-status">Восстановлено</span>
             `;
+            item.addEventListener("click", () => openStoryReader(story.id, 0));
             list.appendChild(item);
           });
+      }
+
+      function renderAlbum() {
+        const grid = document.getElementById("albumGrid");
+        grid.innerHTML = "";
+        mediaItems
+          .filter((item) => progress.unlockedMedia.includes(item.id))
+          .forEach((item, index) => {
+            const card = document.createElement("article");
+            card.className = "album-card";
+            card.tabIndex = 0;
+            card.setAttribute("role", "button");
+            card.style.setProperty("--tilt", `${index % 2 === 0 ? -1.1 : 1.2}deg`);
+            const mediaMarkup = item.type === "image"
+              ? `<img src="${item.src}" alt="" data-media-preview><div class="media-missing hidden">Сохранённый момент</div>`
+              : `<img src="${item.poster}" alt="" data-media-preview><div class="media-missing hidden">Сохранённое видео</div><span class="play-badge" aria-hidden="true">▶</span>`;
+            card.innerHTML = `
+              <div class="album-thumb">${mediaMarkup}</div>
+              <div class="album-meta">
+                <p class="album-date">${item.date}</p>
+                <h2>${item.title}</h2>
+                <p class="album-guardian">${item.guardian}</p>
+              </div>
+            `;
+            const preview = card.querySelector("[data-media-preview]");
+            const fallback = card.querySelector(".media-missing");
+            preview.addEventListener("error", () => {
+              preview.classList.add("hidden");
+              fallback.classList.remove("hidden");
+            });
+            const open = () => openMediaModal(item.id, false);
+            card.addEventListener("click", open);
+            card.addEventListener("keydown", (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                open();
+              }
+            });
+            grid.appendChild(card);
+          });
+      }
+
+      function openMediaModal(mediaId, unlockOnClose) {
+        const item = mediaItems.find((media) => media.id === mediaId);
+        if (!item) return;
+        previousFocus = document.activeElement;
+        mediaModal.dataset.mediaId = mediaId;
+        mediaModal.dataset.unlockOnClose = unlockOnClose ? "true" : "false";
+        const held = document.getElementById("heldMedia");
+        held.innerHTML = "";
+        const fallback = document.createElement("div");
+        fallback.className = "media-missing hidden";
+        fallback.textContent = item.type === "video" ? "Видео хранится здесь" : "Фотография хранится здесь";
+
+        if (item.type === "image") {
+          const image = document.createElement("img");
+          image.src = item.src;
+          image.alt = "";
+          image.addEventListener("error", () => {
+            image.classList.add("hidden");
+            fallback.classList.remove("hidden");
+          });
+          held.appendChild(image);
+        } else {
+          const video = document.createElement("video");
+          video.src = item.src;
+          video.controls = true;
+          video.playsInline = true;
+          if (item.poster) video.poster = item.poster;
+          video.addEventListener("error", () => {
+            video.classList.add("hidden");
+            fallback.classList.remove("hidden");
+          });
+          held.appendChild(video);
+        }
+        held.appendChild(fallback);
+        document.getElementById("mediaCaption").innerHTML = `<strong>${item.title}</strong><span>${item.date} · ${item.guardian}</span>`;
+        openModal(mediaModal);
+      }
+
+      function openModal(modal) {
+        modal.classList.remove("hidden");
+        document.body.classList.add("modal-open");
+        window.setTimeout(() => modal.querySelector(".modal-close")?.focus(), 0);
+      }
+
+      function closeModal(modal) {
+        if (!modal || modal.classList.contains("hidden")) return;
+        const mediaId = modal === mediaModal ? modal.dataset.mediaId : "";
+        const shouldUnlock = modal === mediaModal && modal.dataset.unlockOnClose === "true";
+        modal.classList.add("hidden");
+        if (modal === mediaModal) {
+          const video = modal.querySelector("video");
+          if (video) video.pause();
+          if (shouldUnlock && mediaId && !progress.unlockedMedia.includes(mediaId)) {
+            progress.unlockedMedia.push(mediaId);
+            if (mediaId === "july-2020-photo") progress.secondStoryStage = "available";
+            saveProgress();
+            showToast("Сохранённый момент добавлен в фотоальбом");
+            renderReader();
+          }
+        }
+        if (document.querySelectorAll(".modal:not(.hidden)").length === 0) {
+          document.body.classList.remove("modal-open");
+        }
+        if (previousFocus instanceof HTMLElement) previousFocus.focus();
+      }
+
+      function closeAllModals() {
+        [guardianModal, mediaModal].forEach((modal) => {
+          if (!modal.classList.contains("hidden")) {
+            modal.classList.add("hidden");
+            modal.querySelector("video")?.pause();
+          }
+        });
+        document.body.classList.remove("modal-open");
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2800);
       }
 
       function initializeArtSlots(root = document) {
@@ -1630,13 +2258,16 @@
           const image = slot.querySelector("img");
           if (!image || image.dataset.fallbackReady === "true") return;
           image.dataset.fallbackReady = "true";
-
-          const markLoaded = () => slot.classList.add("has-image");
-          const markMissing = () => slot.classList.remove("has-image");
-
+          const markLoaded = () => {
+            slot.classList.add("has-image");
+            image.classList.remove("hidden");
+          };
+          const markMissing = () => {
+            slot.classList.remove("has-image");
+            image.classList.add("hidden");
+          };
           image.addEventListener("load", markLoaded);
           image.addEventListener("error", markMissing);
-
           if (image.complete) {
             if (image.naturalWidth > 0) markLoaded();
             else markMissing();
@@ -1650,9 +2281,8 @@
         const height = coverImage.naturalHeight;
         const ratio = width / height;
         book.style.setProperty("--cover-ratio", `${width} / ${height}`);
-
-        const maxByViewport = Math.max(250, window.innerHeight * 0.66 * ratio);
-        const desiredWidth = Math.min(window.innerWidth * 0.76, 500, maxByViewport);
+        const maxByHeight = Math.max(230, window.innerHeight * .66 * ratio);
+        const desiredWidth = Math.min(window.innerWidth * .76, 500, maxByHeight);
         book.style.width = `${Math.round(desiredWidth)}px`;
       }
 
@@ -1660,17 +2290,15 @@
         coverImage.previousElementSibling?.classList.add("hidden");
         fitBookToCover();
       });
-
-      coverImage.addEventListener("error", () => {
-        coverImage.classList.add("hidden");
-      });
-
+      coverImage.addEventListener("error", () => coverImage.classList.add("hidden"));
       if (coverImage.complete && coverImage.naturalWidth > 0) {
         coverImage.previousElementSibling?.classList.add("hidden");
         fitBookToCover();
       }
-
-      window.addEventListener("resize", fitBookToCover);
+      window.addEventListener("resize", () => {
+        fitBookToCover();
+        if (currentScreenId() === "readerScreen") renderReader();
+      });
 
       openBookButton.addEventListener("click", openBook);
       book.addEventListener("click", openBook);
@@ -1682,57 +2310,54 @@
       });
 
       document.getElementById("startStoryButton").addEventListener("click", () => {
-        progress.storyStage = "start";
+        progress.firstStoryStage = "prelude";
         saveProgress();
-        showScreen("storyStartScreen");
+        showScreen("storyPreludeScreen");
       });
-
-      document.getElementById("meetGuardianButton").addEventListener("click", () => {
-        showScreen("guardiansScreen");
-      });
-
+      document.getElementById("meetGuardianButton").addEventListener("click", () => showScreen("guardiansScreen"));
       document.getElementById("turnMissingPageButton").addEventListener("click", () => {
-        progress.storyStage = "password";
+        progress.firstStoryStage = "password";
         saveProgress();
         passwordInput.value = "";
         passwordFeedback.textContent = "";
         showScreen("passwordScreen");
         window.setTimeout(() => passwordInput.focus(), 50);
       });
-
       document.getElementById("passwordForm").addEventListener("submit", handlePasswordSubmit);
+      document.getElementById("openRestoredStoryButton").addEventListener("click", () => openStoryReader(currentRestoreStoryId, 0));
+      document.getElementById("readerPrev").addEventListener("click", () => turnReader(-1));
+      document.getElementById("readerNext").addEventListener("click", () => turnReader(1));
 
-      document.getElementById("openRestoredStoryButton").addEventListener("click", () => {
-        showScreen("storyScreen");
+      document.querySelectorAll(".cup-button").forEach((button) => button.addEventListener("click", () => handleCupClick(button)));
+      document.getElementById("restoreCoffeeButton").addEventListener("click", restoreCoffeeStory);
+
+      document.querySelectorAll("[data-close-modal]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          closeModal(document.getElementById(button.dataset.closeModal));
+        });
       });
 
-      document.getElementById("backToBookButton").addEventListener("click", () => {
-        showScreen("homeScreen");
-      });
-
-      document.getElementById("storyGuardiansButton").addEventListener("click", () => {
-        showScreen("guardiansScreen");
-      });
-
-      modalCloseButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        closeGuardianModal();
-      });
-
-      guardianModal.addEventListener("click", (event) => {
-        if (event.target === guardianModal) closeGuardianModal();
+      [guardianModal, mediaModal].forEach((modal) => {
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) closeModal(modal);
+        });
       });
 
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeGuardianModal();
+        if (event.key === "Escape") {
+          if (!mediaModal.classList.contains("hidden")) closeModal(mediaModal);
+          else if (!guardianModal.classList.contains("hidden")) closeModal(guardianModal);
+        }
+        if (currentScreenId() === "readerScreen") {
+          if (event.key === "ArrowRight") turnReader(1);
+          if (event.key === "ArrowLeft") turnReader(-1);
+        }
       });
 
       document.querySelectorAll("[data-screen]").forEach((button) => {
-        button.addEventListener("click", () => {
-          closeGuardianModal();
-          showScreen(button.dataset.screen);
-        });
+        button.addEventListener("click", () => showScreen(button.dataset.screen));
       });
 
       initializeArtSlots();
@@ -1740,6 +2365,7 @@
       updateHomeButton();
       renderGuardians();
       renderContents();
+      renderAlbum();
       resetBookVisual();
     })();
   </script>
