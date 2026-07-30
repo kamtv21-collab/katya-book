@@ -385,7 +385,6 @@
       to { opacity: 1; filter: blur(0); text-shadow: 0 0 18px rgba(185, 138, 78, .45); }
     }
 
-    .loading-description { margin: 0; color: var(--muted); font-size: 18px; line-height: 1.65; }
 
     /* Вступление */
 
@@ -426,17 +425,32 @@
       scrollbar-color: rgba(120, 55, 68, .28) transparent;
     }
 
-    .intro-copy h1, .section-heading h1 {
+    .section-heading h1 {
       margin: 0;
       font-size: clamp(42px, 7vw, 72px);
       font-weight: 400;
     }
 
+    .guardian-identity {
+      display: grid;
+      gap: 3px;
+      margin: 0 0 24px;
+    }
+
+    .guardian-name,
+    .guardian-title-role {
+      margin: 0;
+      color: var(--wine);
+      font: 700 clamp(21px, 2.7vw, 28px)/1.25 Arial, sans-serif;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
     .guardian-role {
-      margin: 7px 0 24px;
+      margin: 5px 0 16px;
       color: var(--wine);
       font: 700 12px/1.4 Arial, sans-serif;
-      letter-spacing: .15em;
+      letter-spacing: .13em;
       text-transform: uppercase;
     }
 
@@ -1057,57 +1071,129 @@
       flex-wrap: wrap;
     }
 
-    /* Вторая история: две чашки */
+    /* Испытания историй */
 
-    .coffee-panel {
+    .coffee-panel,
+    .strawberry-panel {
       width: min(920px, 100%);
       padding: clamp(30px, 5vw, 58px);
       border: 1px solid var(--line);
       border-radius: 28px;
       background: rgba(250, 243, 232, .84);
       box-shadow: 0 28px 70px rgba(67, 44, 38, .16);
-      text-align: center;
     }
 
-    .coffee-panel h1 {
+    .coffee-panel { text-align: center; }
+
+    .coffee-panel h1,
+    .strawberry-panel h1 {
       margin: 0 0 16px;
       font-size: clamp(40px, 7vw, 70px);
       font-weight: 400;
+      line-height: 1.05;
     }
 
     .coffee-panel > p:not(.eyebrow) {
-      max-width: 680px;
+      max-width: 700px;
       margin: 0 auto 26px;
       color: var(--muted);
       font-size: 18px;
       line-height: 1.65;
     }
 
+    .challenge-story {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.68;
+    }
+
+    .challenge-story p { margin: 0 0 1em; }
+
+    .riddle-card {
+      margin-top: 28px;
+      padding: clamp(22px, 4vw, 34px);
+      border: 1px solid rgba(120, 55, 68, .15);
+      border-radius: 22px;
+      background: rgba(255, 250, 242, .74);
+    }
+
+    .riddle-question {
+      margin: 0 0 18px;
+      color: var(--wine-dark);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .delivery-clues {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 20px;
+      padding-left: 24px;
+      color: #6c554d;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .delivery-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .delivery-form .password-input { flex: 1 1 250px; }
+    .challenge-feedback { min-height: 24px; margin: 14px 0 0; color: var(--wine); font-weight: 700; }
+
     .coffee-game {
-      max-width: 620px;
+      max-width: 660px;
       margin: 30px auto 0;
       display: grid;
       gap: 22px;
     }
 
-    .sachet {
-      width: 150px;
-      margin: 0 auto;
-      padding: 18px 10px;
-      border-radius: 10px;
-      color: #4d3a31;
-      background: linear-gradient(135deg, #b7b3ae, #e5e0d9);
-      box-shadow: 0 10px 24px rgba(70, 50, 40, .16);
-      font: 700 13px/1.35 Arial, sans-serif;
-      letter-spacing: .07em;
-      text-transform: uppercase;
+    .sachet-options {
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      gap: 18px;
+      min-height: 150px;
     }
+
+    .sachet-button {
+      width: 116px;
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      padding: 12px 8px;
+      border: 1px solid rgba(120, 55, 68, .16);
+      border-radius: 14px;
+      cursor: pointer;
+      background: rgba(255, 250, 242, .72);
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .sachet-button:hover { transform: translateY(-3px); }
+    .sachet-button.selected { background: rgba(185, 138, 78, .2); box-shadow: 0 10px 24px rgba(70, 50, 40, .15); }
+    .sachet-button span {
+      width: 70px;
+      display: block;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #aaa7a2, #e4dfd8);
+      box-shadow: 0 8px 18px rgba(70, 50, 40, .13);
+    }
+    .sachet-button.small span { height: 72px; }
+    .sachet-button.medium span { height: 92px; }
+    .sachet-button.large span { height: 120px; }
+    .sachet-button small { color: var(--muted); font: 700 11px/1.2 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 
     .cups {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 22px;
+      transition: opacity .25s ease;
     }
+
+    .cups.is-disabled { opacity: .42; }
 
     .cup-button {
       min-height: 175px;
@@ -1120,7 +1206,8 @@
       transition: transform .2s ease, background .25s ease;
     }
 
-    .cup-button:hover { transform: translateY(-3px); }
+    .cup-button:hover:not(:disabled) { transform: translateY(-3px); }
+    .cup-button:disabled { cursor: default; }
     .cup-button.filled { background: rgba(190, 153, 111, .22); }
 
     .cup-shape {
@@ -1197,7 +1284,14 @@
 
     .guardian-image-wrap .art-slot { width: 100%; height: 100%; }
     .guardian-card-body { padding: 22px; }
-    .guardian-card-body h2 { margin: 0; font-size: 30px; font-weight: 400; }
+    .guardian-card-body h2,
+    .guardian-card-body .guardian-role {
+      margin: 0 0 5px;
+      color: var(--wine);
+      font: 700 18px/1.3 Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
     .guardian-quote { margin: 0; color: var(--muted); font-style: italic; line-height: 1.55; }
 
     .guardian-card.locked {
@@ -1246,13 +1340,15 @@
     /* Фотоальбом */
 
     .album-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 28px;
-      align-items: start;
+      columns: 300px 3;
+      column-gap: 28px;
     }
 
     .album-card {
+      width: 100%;
+      display: inline-block;
+      break-inside: avoid;
+      margin: 0 0 28px;
       padding: 14px 14px 22px;
       border: 1px solid rgba(103, 72, 58, .12);
       border-radius: 7px;
@@ -1269,9 +1365,8 @@
     }
 
     .album-thumb {
-      aspect-ratio: 4 / 3;
-      display: grid;
-      place-items: center;
+      width: 100%;
+      display: block;
       overflow: hidden;
       position: relative;
       background:
@@ -1280,16 +1375,23 @@
         #e9ddcc;
     }
 
-    .album-thumb img, .album-thumb video {
+    .album-thumb img {
       width: 100%;
-      height: 100%;
+      height: auto;
       display: block;
-      object-fit: cover;
+      object-fit: contain;
+    }
+
+    .album-thumb video {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
     }
 
     .video-placeholder {
       width: 100%;
-      height: 100%;
+      aspect-ratio: 16 / 9;
       display: grid;
       place-items: center;
       align-content: center;
@@ -1309,6 +1411,9 @@
     }
 
     .album-thumb .media-missing {
+      min-height: 260px;
+      display: grid;
+      place-items: center;
       padding: 25px;
       color: var(--muted);
       text-align: center;
@@ -1382,7 +1487,9 @@
     }
 
     .modal-art .art-slot { width: 100%; height: 520px; }
-    .modal-copy h2 { margin: 0; font-size: clamp(42px, 6vw, 66px); font-weight: 400; }
+    .modal-identity { margin-top: 36px; }
+    .modal-copy .guardian-name,
+    .modal-copy .guardian-title-role { font-size: clamp(21px, 3vw, 28px); }
     .modal-quote {
       margin: 26px 0;
       padding-left: 17px;
@@ -1406,8 +1513,9 @@
     }
 
     .held-media {
-      width: min(82vw, 720px);
-      max-height: 76svh;
+      width: fit-content;
+      max-width: 94vw;
+      max-height: 78svh;
       padding: 13px 13px 34px;
       position: relative;
       border-radius: 5px;
@@ -1417,17 +1525,18 @@
       animation: liftPhoto .72s cubic-bezier(.2, .8, .2, 1) both;
     }
 
-    @keyframes liftPhoto {
-      from { opacity: 0; filter: blur(10px); transform: translateY(55px) scale(.74) rotate(-6deg); }
-      to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1) rotate(-1.2deg); }
-    }
-
     .held-media img, .held-media video {
-      width: 100%;
-      max-height: calc(76svh - 47px);
+      width: auto;
+      height: auto;
+      max-width: calc(94vw - 26px);
+      max-height: calc(78svh - 47px);
       display: block;
       object-fit: contain;
       background: #e9ddcc;
+    }
+
+    .held-media.is-video video {
+      width: min(86vw, 850px);
     }
 
     .held-media .media-missing {
@@ -1482,6 +1591,9 @@
       .paper-page { padding: 30px 24px 62px; }
       .password-art .art-slot { height: 315px; }
       .password-box { flex-direction: column; }
+      .delivery-form { flex-direction: column; }
+      .sachet-options { gap: 8px; }
+      .sachet-button { width: 31%; min-width: 86px; }
       .modal-art .art-slot { height: 320px; }
       .contents-item { grid-template-columns: 1fr; }
 
@@ -1554,7 +1666,6 @@
       </div>
       <div class="home-actions">
         <button type="button" id="openBookButton" class="primary">Открыть книгу</button>
-        <p class="home-hint">Можно нажать на саму книгу</p>
       </div>
     </div>
   </main>
@@ -1570,9 +1681,6 @@
       <div class="loading-copy">
         <h1>Поиск хранителя...</h1>
         <p id="loadingStatus" class="loading-status">Книга вспоминает, кому доверено начало</p>
-        <p id="loadingDescription" class="loading-description">
-          На чистой странице постепенно проступают акварельные краски и карандашные линии.
-        </p>
       </div>
     </div>
   </section>
@@ -1587,8 +1695,10 @@
       </div>
       <div class="intro-copy">
         <p class="eyebrow">Первый хранитель</p>
-        <h1>Таня</h1>
-        <p class="guardian-role">Хранитель выбора</p>
+        <div class="guardian-identity">
+          <span class="guardian-name">Таня</span>
+          <span class="guardian-title-role">Хранитель выбора</span>
+        </div>
         <div class="intro-text">
           <p><strong>Катя, привет.</strong></p>
           <p>У каждой истории есть начало.</p>
@@ -1637,19 +1747,14 @@
           <p class="eyebrow">Июль 2020 года</p>
           <h1>Месяц, с которого всё началось</h1>
           <p>
-            К тому моменту мы были знакомы уже почти два года. Но знакомство ещё
-            не успело стать настоящей дружбой: мы почти не общались, жили своими
-            жизнями и, кажется, даже не подозревали, насколько скоро всё изменится.
-          </p>
-          <p>
-            Тем летом ты защитила диплом, окончила Нархоз, съехала с арендованной
-            квартиры и на время поселилась в квартире Дениса, Гриши и Бори, пока
-            их не было в городе.
+            К тому моменту мы были знакомы уже почти два года, но почти не общались
+            и жили каждая своей жизнью.
           </p>
           <p>А потом ты ответила на одну из моих историй в Instagram.</p>
           <p>
-            Обычное сообщение. Совсем небольшой выбор, который тогда вряд ли
-            казался началом чего-то важного.
+            Это было обычное сообщение, которое тогда вряд ли могло показаться
+            началом чего-то важного. Но после него мы встретились, снова начали
+            общаться, и события вдруг стали развиваться одно за другим.
           </p>
           <button type="button" id="turnMissingPageButton" class="primary">Перевернуть страницу</button>
         </div>
@@ -1724,25 +1829,68 @@
     </div>
   </section>
 
+  <section id="strawberryChallengeScreen" class="screen hidden">
+    <article class="strawberry-panel">
+      <p class="eyebrow">6 мая 2025 года · Потерянная страница</p>
+      <h1>Название доставки стёрлось</h1>
+      <div class="challenge-story">
+        <p>
+          В тот май ты жила у меня после операции. Ты ходила на двух костылях,
+          не могла сгибать ногу, и даже самые обычные бытовые действия требовали
+          от тебя гораздо больше сил, чем обычно.
+        </p>
+        <p>
+          По дороге с работы я написала, что у меня плохое настроение, что я приеду
+          домой и, скорее всего, буду плакать. А дома меня уже ждали помытая клубника
+          и клубничное мороженое в форме сердца.
+        </p>
+        <p>
+          Для этого сюрприза пришлось заказать доставку. И название сервиса в тот
+          момент звучало почти издевательски: ты точно не могла воспользоваться тем,
+          в честь чего он был назван.
+        </p>
+      </div>
+      <div class="riddle-card">
+        <p class="riddle-question">Как называлась доставка?</p>
+        <ol id="deliveryClues" class="delivery-clues">
+          <li>У него обычно два колеса.</li>
+          <li class="hidden">Он быстрее костылей.</li>
+          <li class="hidden">Весной на нём снова появляется половина города.</li>
+          <li class="hidden">Но 6 мая он привёз не Катю, а клубнику и мороженое.</li>
+        </ol>
+        <button type="button" id="revealClueButton" class="secondary">Открыть следующую подсказку</button>
+        <form id="deliveryForm" class="delivery-form">
+          <input id="deliveryInput" class="password-input" type="text" autocomplete="off" placeholder="Название доставки" aria-label="Название доставки">
+          <button type="submit" class="primary">Вернуть страницу</button>
+        </form>
+        <p id="deliveryFeedback" class="challenge-feedback" aria-live="polite"></p>
+      </div>
+    </article>
+  </section>
+
   <section id="coffeeChallengeScreen" class="screen hidden">
     <article class="coffee-panel">
       <p class="eyebrow">24 июля 2026 года · Хранитель выбора</p>
       <h1>Две маленькие чашки</h1>
       <p>
-        В серой коробке остался один пакетик кофе 3-в-1, а чашек было две.
-        Раздели пакетик между обеими чашками, чтобы вернуть эту страницу.
+        В коробке было много кофе разных брендов и вкусов. Сначала найди пакетик,
+        в котором больше всего порошка, а затем раздели его между двумя маленькими чашками.
       </p>
       <div class="coffee-game">
-        <div class="sachet">Кофе 3-в-1<br>с шоколадной присыпкой</div>
-        <div class="cups">
-          <button type="button" class="cup-button" data-cup="left" aria-label="Насыпать кофе в первую чашку">
+        <div class="sachet-options" aria-label="Пакетики кофе">
+          <button type="button" class="sachet-button small" data-sachet="small"><span></span><small>Меньше</small></button>
+          <button type="button" class="sachet-button medium" data-sachet="medium"><span></span><small>Средний</small></button>
+          <button type="button" class="sachet-button large" data-sachet="large"><span></span><small>Больше всего</small></button>
+        </div>
+        <div id="coffeeCups" class="cups is-disabled">
+          <button type="button" class="cup-button" data-cup="left" aria-label="Насыпать кофе в первую чашку" disabled>
             <span class="cup-shape" aria-hidden="true"></span>
           </button>
-          <button type="button" class="cup-button" data-cup="right" aria-label="Насыпать кофе во вторую чашку">
+          <button type="button" class="cup-button" data-cup="right" aria-label="Насыпать кофе во вторую чашку" disabled>
             <span class="cup-shape" aria-hidden="true"></span>
           </button>
         </div>
-        <p id="coffeeFeedback" class="coffee-feedback" aria-live="polite">Нажми на обе чашки.</p>
+        <p id="coffeeFeedback" class="coffee-feedback" aria-live="polite">Сначала выбери самый полный пакетик.</p>
         <button type="button" id="restoreCoffeeButton" class="primary" disabled>Вернуть страницу</button>
       </div>
     </article>
@@ -1798,9 +1946,10 @@
         </div>
       </div>
       <div class="modal-copy">
-        <p class="eyebrow">Хранитель</p>
-        <h2 id="modalName"></h2>
-        <p id="modalRole" class="guardian-role"></p>
+        <div class="guardian-identity modal-identity">
+          <h2 id="modalName" class="guardian-name"></h2>
+          <p id="modalRole" class="guardian-title-role"></p>
+        </div>
         <blockquote id="modalQuote" class="modal-quote"></blockquote>
         <div id="modalDescription" class="modal-description"></div>
       </div>
@@ -1821,15 +1970,17 @@
     (() => {
       "use strict";
 
-      const STORAGE_KEY = "katyaBookProgressV6";
-      const OLD_STORAGE_KEY = "katyaBookProgressV5";
+      const STORAGE_KEY = "katyaBookProgressV7";
+      const OLD_STORAGE_KEYS = ["katyaBookProgressV6", "katyaBookProgressV5"];
       const CORRECT_PASSWORD = "пупупу";
+      const CORRECT_DELIVERY = "самокат";
 
       const defaultProgress = {
         hasOpenedBook: false,
         introSeen: false,
         firstStoryStage: "not-started",
-        secondStoryStage: "locked",
+        strawberryStoryStage: "locked",
+        coffeeStoryStage: "locked",
         unlockedStories: [],
         unlockedGuardians: ["tanya"],
         unlockedMedia: [],
@@ -1892,6 +2043,15 @@
           guardian: "Таня · Хранитель выбора"
         },
         {
+          id: "strawberry-2025-photo",
+          storyId: "strawberry-2025",
+          type: "image",
+          src: "assets/album/strawberry-2025.webp",
+          date: "6 мая 2025",
+          title: "Сердце на столе",
+          guardian: "Таня · Хранитель выбора"
+        },
+        {
           id: "coffee-2026-video",
           storyId: "coffee-2026",
           type: "video",
@@ -1925,79 +2085,99 @@
             {
               html: `
                 <div class="reader-meta">Июль 2020 · Начало</div>
-                <h2>Обычное сообщение</h2>
-                <p>
-                  К тому моменту мы были знакомы уже почти два года. Но знакомство ещё
-                  не успело стать настоящей дружбой: мы почти не общались, жили своими
-                  жизнями и не подозревали, насколько скоро всё изменится.
-                </p>
-                <p>
-                  Тем летом ты защитила диплом, окончила Нархоз, съехала с арендованной
-                  квартиры и на время поселилась в квартире Дениса, Гриши и Бори, пока
-                  их не было в городе.
-                </p>
+                <p class="story-lead"><strong>К тому моменту мы были знакомы уже почти два года,</strong> но почти не общались и жили каждая своей жизнью.</p>
                 <p>А потом ты ответила на одну из моих историй в Instagram.</p>
+                <p>
+                  Это было обычное сообщение, которое тогда вряд ли могло показаться
+                  началом чего-то важного. Но после него мы встретились, снова начали
+                  общаться, и события вдруг стали развиваться одно за другим.
+                </p>
               `
             },
             {
               html: `
-                <div class="reader-meta">Июль 2020 · Наше место</div>
-                <h2>Почти каждый день</h2>
-                <p>
-                  После того сообщения мы начали видеться почти каждый день. Ты жила в
-                  пустой квартире Дениса, Гриши и Бори, а я — совсем рядом, на Толстого,
-                  недалеко от метро «Октябрьская».
-                </p>
-                <p>
-                  Эта квартира быстро стала нашим местом на весь июль. Я готовила куриное
-                  филе с помидорами и сыром, складывала его в контейнеры и приносила тебе.
-                </p>
-                <p>Мы ели бутерброды, пили чай, смотрели фильмы и разговаривали обо всём подряд.</p>
+                <div class="reader-meta">Июль 2020 · Переезд</div>
+                <p class="story-lead"><strong>Вскоре ты съезжала с арендованной квартиры.</strong> Мы с моим бывшим мужем помогли тебе перевезти вещи в квартиру Дениса, Гриши и Бори, которых в тот момент не было в городе.</p>
+                <p>Именно в этой квартире ты дистанционно защищала диплом. Позже ты получила и сам диплом, окончательно завершив учёбу в Нархозе.</p>
+                <p>После защиты, а затем и получения диплома я начала всё чаще оставаться у тебя ночевать.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">Июль 2020 · Почти каждый день</div>
+                <p class="story-lead"><strong>Сначала это были просто встречи и долгие разговоры.</strong> А потом почти незаметно начался тот самый июль, когда мы стали видеться практически каждый день.</p>
+                <p>Ты жила в квартире Дениса, Гриши и Бори, а я — совсем рядом, на Толстого, недалеко от метро «Октябрьская».</p>
+                <p>Я готовила куриное филе с помидорами и сыром, складывала его в контейнеры и приносила тебе. Мы ели бутерброды, пили чай, смотрели фильмы и разговаривали обо всём подряд.</p>
               `
             },
             {
               html: `
                 <div class="reader-meta">Июль 2020 · Рассветы</div>
-                <h2>Ночь не должна заканчиваться</h2>
-                <p>
-                  Иногда разговоры заканчивались только в пять или шесть утра. Тогда мы
-                  выходили на улицу и шли к набережной встречать рассвет, будто ночь ещё
-                  не должна была заканчиваться.
-                </p>
-                <p>
-                  Накопленные бонусы «Спасибо» превращались в Burger King или McDonald’s,
-                  а самые обычные прогулки — в события, которые почему-то запомнились
-                  лучше многих больших праздников.
-                </p>
+                <p class="story-lead"><strong>Иногда разговоры заканчивались только в пять или шесть утра.</strong> Тогда мы выходили на улицу и шли к набережной встречать рассвет, будто ночь ещё не должна была заканчиваться.</p>
+                <p>Накопленные бонусы «Спасибо» превращались в Burger King или McDonald’s, а самые обычные прогулки — в события, которые почему-то запомнились лучше многих больших праздников.</p>
               `
             },
             {
               html: `
                 <div class="reader-meta">Июль 2020 · Поддержка</div>
-                <h2>Стать по-настоящему близкими</h2>
-                <p>
-                  Ты переживала сложный период в отношениях. Позже в похожей ситуации
-                  оказалась я, и тогда уже ты была рядом со мной.
-                </p>
-                <p>
-                  Кажется, именно в тот месяц мы впервые поняли, что можем не только
-                  смеяться и гулять, но и по-настоящему поддерживать друг друга.
-                </p>
-                <p>Этот маленький мир закончился, когда вернулся Гриша. Но главное уже не закончилось.</p>
+                <p class="story-lead"><strong>Ты переживала сложный период в отношениях.</strong> Позже в похожей ситуации оказалась я, и тогда уже ты была рядом со мной.</p>
+                <p>Кажется, именно в тот месяц мы впервые поняли, что можем не только смеяться и гулять, но и по-настоящему поддерживать друг друга.</p>
+                <p>Этот маленький мир закончился, когда вернулся Гриша. Но после этого месяца мы уже не потерялись друг у друга.</p>
+                <blockquote>Поэтому для меня именно июль 2020 года — настоящее начало истории, которая после этого больше не прерывалась.</blockquote>
+              `
+            }
+          ]
+        },
+        "strawberry-2025": {
+          id: "strawberry-2025",
+          order: 20250506,
+          date: "6 мая 2025",
+          title: "Сердце на столе",
+          guardian: "Хранитель выбора",
+          guardianName: "Таня",
+          chapter: "Глава II",
+          mediaId: "strawberry-2025-photo",
+          pages: [
+            {
+              kind: "title",
+              html: `
+                <div class="reader-meta">Таня · Хранитель выбора</div>
+                <div class="chapter-number">II</div>
+                <h1>Сердце на столе</h1>
+                <p>6 мая 2025 года</p>
               `
             },
             {
               html: `
-                <div class="reader-meta">Июль 2020 · Финал главы</div>
-                <h2>Настоящее начало</h2>
-                <p>
-                  Июль закончился, квартира снова перестала быть только нашей, а ночные
-                  прогулки стали реже. Но после этого месяца мы уже не потерялись друг у друга.
-                </p>
-                <blockquote>
-                  Поэтому для меня именно июль 2020 года — настоящее начало истории,
-                  которая после этого больше не прерывалась.
-                </blockquote>
+                <div class="reader-meta">6 мая 2025 · После операции</div>
+                <p class="story-lead"><strong>В тот май ты жила у меня после операции.</strong> Ты ходила на двух костылях, не могла сгибать ногу, и тебе было тяжело передвигаться, мыться и делать почти всё, что обычно не требует отдельного плана.</p>
+                <p>В один из дней я ехала с работы и написала тебе, что у меня плохое настроение. Что я приеду домой и, скорее всего, буду плакать.</p>
+                <p>С чем именно это было связано, я уже не помню. Зато очень хорошо помню, что ждало меня дома.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">6 мая 2025 · Сюрприз</div>
+                <p class="story-lead"><strong>На столе стояла тарелка с помытой клубникой</strong> и мороженое в форме сердца — кажется, тоже клубничное.</p>
+                <p>Клубника — моя любимая ягода, и ты это знала. В мае она совсем не дешёвая, особенно если заказывать её с доставкой. Мороженое в форме сердца тоже было не самым обычным и не самым бюджетным выбором.</p>
+                <p>Всё это приехало из «Самоката» — название, которое рядом с твоими костылями в тот момент звучало почти как отдельная шутка.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">6 мая 2025 · То, чего не было видно</div>
+                <p class="story-lead"><strong>Но главное было даже не в потраченных деньгах.</strong> Тебе пришлось открыть курьеру дверь, забрать заказ, удерживая два костыля, и каким-то образом донести всё внутрь.</p>
+                <p>Потом ты помыла клубнику в ванной, потому что на кухне у меня не было раковины. А после — снова на костылях — перенесла ягоды на кухню, переложила их в тарелку и оставила на столе рядом с сердечком из мороженого.</p>
+                <p>Я увидела готовый сюрприз. Но за ним стояла целая цепочка действий, каждое из которых в тот момент давалось тебе непросто.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">6 мая 2025 · Забота</div>
+                <p class="story-lead"><strong>Это был не единственный такой случай.</strong> Мы обе умели встречать друг друга чем-то маленьким, когда знали, что другой грустно.</p>
+                <p>Когда ты работала в цветочном, ты приносила обрезки цветов. Однажды из них появился совсем крошечный букет — я уже не помню, забрала ли его у тебя на работе или ты принесла его сама, но помню само ощущение от этого жеста.</p>
+                <p>Из таких вещей и складывается забота: услышать одну фразу, запомнить любимую ягоду и сделать чуть больше, чем от тебя вообще можно было ждать.</p>
+                <blockquote>Иногда любовь к человеку выглядит как клубника в мае, сердце из мороженого и очень сложный путь от входной двери до кухонного стола.</blockquote>
               `
             }
           ]
@@ -2009,46 +2189,49 @@
           title: "Две маленькие чашки",
           guardian: "Хранитель выбора",
           guardianName: "Таня",
-          chapter: "Глава II",
+          chapter: "Глава III",
           mediaId: "coffee-2026-video",
           pages: [
             {
               kind: "title",
               html: `
                 <div class="reader-meta">Таня · Хранитель выбора</div>
-                <div class="chapter-number">II</div>
+                <div class="chapter-number">III</div>
                 <h1>Две маленькие чашки</h1>
                 <p>24 июля 2026 года</p>
               `
             },
             {
               html: `
-                <div class="reader-meta">24 июля 2026 · Домик</div>
-                <h2>Один пакетик на двоих</h2>
-                <p>
-                  Нас было восемь человек, мы сняли домик и, как это обычно бывает,
-                  привезли с собой много всего — кроме нормальных больших кружек.
-                </p>
-                <p>
-                  В серой коробке нашёлся кофе 3-в-1 с шоколадной присыпкой. Пакетик был
-                  один, маленьких чашек — две, поэтому порошок разделили между ними.
-                </p>
+                <div class="reader-meta">24 июля 2026 · ул. Берёзовая, 27 · ДНП Марусино</div>
+                <p class="story-lead"><strong>Нас было восемь.</strong> Мы сняли домик на улице Берёзовой, 27, в ДНП Марусино и, как это обычно бывает, привезли с собой огромное количество еды, напитков и вещей, часть которых в итоге даже не понадобилась.</p>
+                <p>Кофе тоже было очень много. В серой коробке лежали пакетики разных брендов и вкусов: обычные, сладкие, со сливками, с шоколадной присыпкой. Выбирать можно было долго.</p>
+                <p>И ты выбрала не конкретный вкус или любимую марку. Ты нашла пакетик, в котором визуально было больше всего порошка.</p>
+                <p><strong>Это было очень по-Катиному.</strong></p>
               `
             },
             {
               html: `
-                <div class="reader-meta">24 июля 2026 · Маленький эпизод</div>
-                <h2>Катя и две чашки</h2>
-                <p>
-                  В итоге ты сидела сразу с двумя крошечными чашками и пила из них по очереди.
-                  Сам по себе момент длился совсем недолго, но выглядел настолько по-катиному,
-                  что его невозможно было не снять.
-                </p>
-                <p>
-                  Иногда история сохраняется не из-за чего-то грандиозного, а потому что
-                  один человек на несколько минут становится очень похож на самого себя.
-                </p>
-                <blockquote>Один пакетик, две чашки и ещё один момент, который теперь останется с нами.</blockquote>
+                <div class="reader-meta">24 июля 2026 · Решение</div>
+                <p class="story-lead"><strong>Проблема обнаружилась уже потом:</strong> кружек в домике было достаточно, но все они оказались маленькими. В одну такую кружку содержимое выбранного пакетика просто не помещалось бы нормально.</p>
+                <p>Отказываться от самого большого пакетика ты, конечно, не стала. Вместо этого ты разделила его между двумя маленькими чашками.</p>
+                <p>Но самое смешное было даже не это.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">24 июля 2026 · Две чашки</div>
+                <p class="story-lead"><strong>Ты не выпила сначала кофе из одной чашки, а потом перешла ко второй.</strong> И не чередовала их время от времени.</p>
+                <p>Ты делала глоток из первой и сразу же, без паузы, брала вторую и делала глоток из неё. Глоток из одной — тут же глоток из другой. Потом снова из первой — и сразу из второй.</p>
+                <p>Получалось, будто это была одна большая кружка кофе, которую по какой-то причине разделили на две части, а ты теперь старательно поддерживала в них одинаковый уровень.</p>
+              `
+            },
+            {
+              html: `
+                <div class="reader-meta">24 июля 2026 · Финал главы</div>
+                <p class="story-lead"><strong>Со стороны всё выглядело настолько последовательно и естественно,</strong> словно именно так кофе и положено пить, а странными были все остальные люди, которые пользовались одной кружкой.</p>
+                <p>В итоге из огромного количества пакетиков, вкусов и брендов нам запомнился именно этот: самый большой пакетик, две маленькие чашки и ты, совершенно невозмутимо пьющая из обеих почти одновременно.</p>
+                <blockquote>Иногда для хорошего воспоминания не нужно ничего грандиозного. Достаточно двух маленьких чашек и очень по-Катиному найденного решения.</blockquote>
               `
             }
           ]
@@ -2064,6 +2247,8 @@
       let previousFocus = null;
       let toastTimer = null;
       const filledCups = new Set();
+      let largestSachetSelected = false;
+      let deliveryClueIndex = 0;
 
       const topNav = document.getElementById("topNav");
       const guardiansNav = document.getElementById("guardiansNav");
@@ -2073,7 +2258,6 @@
       const coverImage = document.getElementById("coverImage");
       const openBookButton = document.getElementById("openBookButton");
       const loadingStatus = document.getElementById("loadingStatus");
-      const loadingDescription = document.getElementById("loadingDescription");
       const passwordInput = document.getElementById("passwordInput");
       const passwordFeedback = document.getElementById("passwordFeedback");
       const guardianModal = document.getElementById("guardianModal");
@@ -2084,42 +2268,52 @@
       const turnBack = document.getElementById("turnBack");
 
       function migrateOldProgress() {
-        try {
-          const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY) || "null");
-          if (!old) return null;
-          if (old.firstStoryStage) {
-            return {
+        for (const key of OLD_STORAGE_KEYS) {
+          try {
+            const old = JSON.parse(localStorage.getItem(key) || "null");
+            if (!old) continue;
+            const migrated = {
               ...defaultProgress,
               ...old,
-              unlockedStories: Array.isArray(old.unlockedStories) ? old.unlockedStories : [],
+              unlockedStories: Array.isArray(old.unlockedStories) ? [...old.unlockedStories] : [],
               unlockedGuardians: Array.isArray(old.unlockedGuardians) && old.unlockedGuardians.length
-                ? old.unlockedGuardians
+                ? [...old.unlockedGuardians]
                 : ["tanya"],
-              unlockedMedia: Array.isArray(old.unlockedMedia) ? old.unlockedMedia : []
+              unlockedMedia: Array.isArray(old.unlockedMedia) ? [...old.unlockedMedia] : []
             };
+
+            if (old.storyStage === "password") migrated.firstStoryStage = "password";
+            if (old.storyStage === "restored" || migrated.unlockedStories.includes("july-2020")) {
+              migrated.firstStoryStage = "restored";
+              if (!migrated.unlockedStories.includes("july-2020")) migrated.unlockedStories.push("july-2020");
+            }
+
+            if (old.secondStoryStage) migrated.coffeeStoryStage = old.secondStoryStage;
+            if (migrated.unlockedStories.includes("coffee-2026")) migrated.coffeeStoryStage = "restored";
+            migrated.strawberryStoryStage = migrated.unlockedStories.includes("strawberry-2025")
+              ? "restored"
+              : (migrated.unlockedMedia.includes("july-2020-photo") ? "available" : "locked");
+
+            return migrated;
+          } catch {
+            continue;
           }
-          const migrated = { ...defaultProgress };
-          migrated.hasOpenedBook = Boolean(old.hasOpenedBook);
-          migrated.introSeen = Boolean(old.introSeen);
-          migrated.unlockedGuardians = Array.isArray(old.unlockedGuardians) && old.unlockedGuardians.length
-            ? old.unlockedGuardians
-            : ["tanya"];
-          if (old.storyStage === "password") migrated.firstStoryStage = "password";
-          if (old.storyStage === "restored" || (old.unlockedStories || []).includes("july-2020")) {
-            migrated.firstStoryStage = "restored";
-            migrated.unlockedStories = ["july-2020"];
-            migrated.secondStoryStage = "available";
-          }
-          return migrated;
-        } catch {
-          return null;
         }
+        return null;
       }
 
       function loadProgress() {
         try {
           const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-          if (stored) return { ...defaultProgress, ...stored };
+          if (stored) {
+            return {
+              ...defaultProgress,
+              ...stored,
+              unlockedStories: Array.isArray(stored.unlockedStories) ? stored.unlockedStories : [],
+              unlockedGuardians: Array.isArray(stored.unlockedGuardians) && stored.unlockedGuardians.length ? stored.unlockedGuardians : ["tanya"],
+              unlockedMedia: Array.isArray(stored.unlockedMedia) ? stored.unlockedMedia : []
+            };
+          }
           return migrateOldProgress() || { ...defaultProgress };
         } catch {
           return { ...defaultProgress };
@@ -2203,20 +2397,7 @@
           showScreen("passwordScreen");
           return;
         }
-        if (progress.firstStoryStage === "restored" && !progress.unlockedMedia.includes("july-2020-photo")) {
-          openStoryReader("july-2020", 0);
-          return;
-        }
-        if (progress.secondStoryStage === "available" || progress.secondStoryStage === "locked") {
-          progress.secondStoryStage = "available";
-          saveProgress();
-          resetCoffeeGame();
-          showScreen("coffeeChallengeScreen");
-          return;
-        }
-        if (progress.secondStoryStage === "restored") {
-          openStoryReader(currentStoryId && stories[currentStoryId] ? currentStoryId : "coffee-2026", 0);
-        }
+        openStoryReader("july-2020", 0);
       }
 
       function openBook() {
@@ -2234,13 +2415,11 @@
       function runGuardianSearch() {
         loadingStatus.textContent = "Книга вспоминает, кому доверено начало";
         loadingStatus.classList.remove("is-found");
-        loadingDescription.textContent = "На чистой странице постепенно проступают акварельные краски и карандашные линии.";
         showScreen("loadingScreen");
         window.setTimeout(() => {
           if (currentScreenId() !== "loadingScreen") return;
           loadingStatus.textContent = "Хранитель найден";
           loadingStatus.classList.add("is-found");
-          loadingDescription.textContent = "Таня — Хранитель выбора";
           window.setTimeout(() => {
             if (currentScreenId() !== "loadingScreen") return;
             progress.introSeen = true;
@@ -2266,7 +2445,7 @@
         passwordInput.removeAttribute("aria-invalid");
         progress.firstStoryStage = "restored";
         if (!progress.unlockedStories.includes("july-2020")) progress.unlockedStories.push("july-2020");
-        progress.secondStoryStage = "locked";
+        progress.strawberryStoryStage = "locked";
         currentRestoreStoryId = "july-2020";
         currentStoryId = "july-2020";
         saveProgress();
@@ -2314,11 +2493,19 @@
         `).join("");
 
         let pending = "";
-        if (progress.unlockedMedia.includes("july-2020-photo") && progress.secondStoryStage !== "restored") {
+        if (progress.unlockedMedia.includes("july-2020-photo") && progress.strawberryStoryStage !== "restored") {
+          pending = `
+            <button type="button" class="book-toc-pending" data-continue-search="strawberry-2025">
+              <small>Следующая потерянная страница</small>
+              <strong>6 мая 2025 · продолжить поиск</strong>
+              <span class="book-toc-arrow" aria-hidden="true">›</span>
+            </button>
+          `;
+        } else if (progress.unlockedMedia.includes("strawberry-2025-photo") && progress.coffeeStoryStage !== "restored") {
           pending = `
             <button type="button" class="book-toc-pending" data-continue-search="coffee-2026">
               <small>Следующая потерянная страница</small>
-              <strong>Продолжить поиск истории</strong>
+              <strong>24 июля 2026 · продолжить поиск</strong>
               <span class="book-toc-arrow" aria-hidden="true">›</span>
             </button>
           `;
@@ -2425,17 +2612,28 @@
         renderReaderExtraActions();
       }
 
+      function openPendingStory(storyId) {
+        if (storyId === "strawberry-2025") {
+          progress.strawberryStoryStage = "available";
+          saveProgress();
+          resetDeliveryRiddle();
+          showScreen("strawberryChallengeScreen");
+          return;
+        }
+        if (storyId === "coffee-2026") {
+          progress.coffeeStoryStage = "available";
+          saveProgress();
+          resetCoffeeGame();
+          showScreen("coffeeChallengeScreen");
+        }
+      }
+
       function bindReaderActions() {
         document.querySelectorAll("[data-open-story]").forEach((button) => {
           button.addEventListener("click", () => transitionFromContentsToStory(button.dataset.openStory));
         });
         document.querySelectorAll("[data-continue-search]").forEach((button) => {
-          button.addEventListener("click", () => {
-            progress.secondStoryStage = "available";
-            saveProgress();
-            resetCoffeeGame();
-            showScreen("coffeeChallengeScreen");
-          });
+          button.addEventListener("click", () => openPendingStory(button.dataset.continueSearch));
         });
       }
 
@@ -2465,17 +2663,19 @@
         mediaButton.addEventListener("click", () => openMediaModal(story.mediaId, true));
         extra.appendChild(mediaButton);
 
-        if (story.id === "july-2020" && mediaFound && progress.secondStoryStage !== "restored") {
+        let nextStoryId = "";
+        if (story.id === "july-2020" && mediaFound && progress.strawberryStoryStage !== "restored") {
+          nextStoryId = "strawberry-2025";
+        } else if (story.id === "strawberry-2025" && mediaFound && progress.coffeeStoryStage !== "restored") {
+          nextStoryId = "coffee-2026";
+        }
+
+        if (nextStoryId) {
           const nextStoryButton = document.createElement("button");
           nextStoryButton.type = "button";
           nextStoryButton.className = "secondary";
           nextStoryButton.textContent = "Перейти к следующей истории";
-          nextStoryButton.addEventListener("click", () => {
-            progress.secondStoryStage = "available";
-            saveProgress();
-            resetCoffeeGame();
-            showScreen("coffeeChallengeScreen");
-          });
+          nextStoryButton.addEventListener("click", () => openPendingStory(nextStoryId));
           extra.appendChild(nextStoryButton);
         }
 
@@ -2599,21 +2799,83 @@
         });
       }
 
+      function resetDeliveryRiddle() {
+        deliveryClueIndex = 0;
+        const clues = [...document.querySelectorAll("#deliveryClues li")];
+        clues.forEach((clue, index) => clue.classList.toggle("hidden", index > 0));
+        document.getElementById("deliveryInput").value = "";
+        document.getElementById("deliveryFeedback").textContent = "";
+        document.getElementById("revealClueButton").disabled = clues.length <= 1;
+      }
+
+      function revealNextDeliveryClue() {
+        const clues = [...document.querySelectorAll("#deliveryClues li")];
+        if (deliveryClueIndex >= clues.length - 1) return;
+        deliveryClueIndex += 1;
+        clues[deliveryClueIndex].classList.remove("hidden");
+        document.getElementById("revealClueButton").disabled = deliveryClueIndex >= clues.length - 1;
+      }
+
+      function handleDeliverySubmit(event) {
+        event.preventDefault();
+        const input = document.getElementById("deliveryInput");
+        const feedback = document.getElementById("deliveryFeedback");
+        if (normalizePassword(input.value) !== CORRECT_DELIVERY) {
+          feedback.textContent = "Пока не совпало. Книга открывает ещё одну подсказку.";
+          input.setAttribute("aria-invalid", "true");
+          revealNextDeliveryClue();
+          input.focus();
+          return;
+        }
+        input.removeAttribute("aria-invalid");
+        feedback.textContent = "Верно. Пока Катя передвигалась на костылях, «Самокат» привёз всё необходимое для спасения плохого вечера.";
+        progress.strawberryStoryStage = "restored";
+        if (!progress.unlockedStories.includes("strawberry-2025")) progress.unlockedStories.push("strawberry-2025");
+        currentRestoreStoryId = "strawberry-2025";
+        currentStoryId = "strawberry-2025";
+        saveProgress();
+        window.setTimeout(() => showRestoredScreen("История о клубнике и сердце возвращена в книгу."), 650);
+      }
+
       function resetCoffeeGame() {
         filledCups.clear();
-        document.querySelectorAll(".cup-button").forEach((button) => button.classList.remove("filled"));
-        document.getElementById("coffeeFeedback").textContent = "Нажми на обе чашки.";
+        largestSachetSelected = false;
+        document.querySelectorAll(".sachet-button").forEach((button) => button.classList.remove("selected"));
+        document.querySelectorAll(".cup-button").forEach((button) => {
+          button.classList.remove("filled");
+          button.disabled = true;
+        });
+        document.getElementById("coffeeCups").classList.add("is-disabled");
+        document.getElementById("coffeeFeedback").textContent = "Сначала выбери самый полный пакетик.";
         document.getElementById("restoreCoffeeButton").disabled = true;
       }
 
+      function handleSachetClick(button) {
+        document.querySelectorAll(".sachet-button").forEach((item) => item.classList.remove("selected"));
+        button.classList.add("selected");
+        const feedback = document.getElementById("coffeeFeedback");
+        if (button.dataset.sachet !== "large") {
+          largestSachetSelected = false;
+          feedback.textContent = "В этом пакетике порошка меньше. Катя выбрала самый большой.";
+          document.querySelectorAll(".cup-button").forEach((cup) => cup.disabled = true);
+          document.getElementById("coffeeCups").classList.add("is-disabled");
+          return;
+        }
+        largestSachetSelected = true;
+        feedback.textContent = "Это тот самый пакетик. Теперь раздели его между двумя чашками.";
+        document.querySelectorAll(".cup-button").forEach((cup) => cup.disabled = false);
+        document.getElementById("coffeeCups").classList.remove("is-disabled");
+      }
+
       function handleCupClick(button) {
+        if (!largestSachetSelected) return;
         const id = button.dataset.cup;
         filledCups.add(id);
         button.classList.add("filled");
         const feedback = document.getElementById("coffeeFeedback");
         const restore = document.getElementById("restoreCoffeeButton");
         if (filledCups.size === 2) {
-          feedback.textContent = "Пакетик разделён между двумя чашками.";
+          feedback.textContent = "Самый большой пакетик разделён между двумя маленькими чашками.";
           restore.disabled = false;
         } else {
           feedback.textContent = "Одна чашка готова. Осталась вторая.";
@@ -2621,8 +2883,8 @@
       }
 
       function restoreCoffeeStory() {
-        if (filledCups.size < 2) return;
-        progress.secondStoryStage = "restored";
+        if (!largestSachetSelected || filledCups.size < 2) return;
+        progress.coffeeStoryStage = "restored";
         if (!progress.unlockedStories.includes("coffee-2026")) progress.unlockedStories.push("coffee-2026");
         currentRestoreStoryId = "coffee-2026";
         currentStoryId = "coffee-2026";
@@ -2655,8 +2917,10 @@
               </div>
             </div>
             <div class="guardian-card-body">
-              <h2>${guardian.name}</h2>
-              <p class="guardian-role">${guardian.role}</p>
+              <div class="guardian-card-identity">
+                <h2>${guardian.name}</h2>
+                <p class="guardian-role">${guardian.role}</p>
+              </div>
               <p class="guardian-quote">«${guardian.quote}»</p>
             </div>
           `;
@@ -2759,6 +3023,7 @@
         mediaModal.dataset.mediaId = mediaId;
         mediaModal.dataset.unlockOnClose = unlockOnClose ? "true" : "false";
         const held = document.getElementById("heldMedia");
+        held.className = `held-media ${item.type === "video" ? "is-video" : "is-image"}`;
         held.innerHTML = "";
         const fallback = document.createElement("div");
         fallback.className = "media-missing hidden";
@@ -2808,7 +3073,8 @@
           if (video) video.pause();
           if (shouldUnlock && mediaId && !progress.unlockedMedia.includes(mediaId)) {
             progress.unlockedMedia.push(mediaId);
-            if (mediaId === "july-2020-photo") progress.secondStoryStage = "available";
+            if (mediaId === "july-2020-photo") progress.strawberryStoryStage = "available";
+            if (mediaId === "strawberry-2025-photo") progress.coffeeStoryStage = "available";
             saveProgress();
             showToast("Сохранённый момент добавлен в фотоальбом");
             renderReader();
@@ -2921,6 +3187,9 @@
       document.getElementById("readerPrev").addEventListener("click", () => turnReader(-1));
       document.getElementById("readerNext").addEventListener("click", () => turnReader(1));
 
+      document.getElementById("deliveryForm").addEventListener("submit", handleDeliverySubmit);
+      document.getElementById("revealClueButton").addEventListener("click", revealNextDeliveryClue);
+      document.querySelectorAll(".sachet-button").forEach((button) => button.addEventListener("click", () => handleSachetClick(button)));
       document.querySelectorAll(".cup-button").forEach((button) => button.addEventListener("click", () => handleCupClick(button)));
       document.getElementById("restoreCoffeeButton").addEventListener("click", restoreCoffeeStory);
 
